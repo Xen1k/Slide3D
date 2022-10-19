@@ -3,6 +3,8 @@
 
 #include "glm/glm.hpp"
 
+enum class ShaderType { Lit, Unlit };
+
 struct ShaderProgamSource
 {
 	std::string vertexSource;
@@ -16,8 +18,10 @@ private:
 public:
 	unsigned int ID;
 	Shader();
-	Shader(const std::string& filepath);
+	Shader(const std::string& filepath, ShaderType type = ShaderType::Lit);
 	~Shader();
+
+	ShaderType type;
 
 	void Bind() const;
 	void Unbind() const;

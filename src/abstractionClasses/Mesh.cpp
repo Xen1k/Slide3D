@@ -2,11 +2,24 @@
 
 Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, Texture *texture)
 {
-	this->vertices = vertices;
-	this->indices = indices;
 	if(texture)
 		this->texture = texture;
+	SetVerticesAndIndices(vertices, indices);
 
+	SetVAO();
+}
+
+void Mesh::SetVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<GLuint>& indices)
+{
+	this->vertices = vertices;
+	this->indices = indices;
+	SetVAO();
+}
+
+void Mesh::ClearVerticesAndIndices()
+{
+	this->vertices = {};
+	this->indices = {};
 	SetVAO();
 }
 
@@ -18,6 +31,7 @@ void Mesh::SetVAO()
 	m_VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
 	m_VAO.LinkAttrib(VBO, 1, 2, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
 	m_VAO.LinkAttrib(VBO, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(5 * sizeof(float)));
+
 
 	m_VAO.Unbind();
 	VBO.Unbind();

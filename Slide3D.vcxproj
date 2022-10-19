@@ -142,6 +142,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Grid.cpp" />
+    <ClCompile Include="src\utils\Selector.cpp" />
+    <ClCompile Include="src\utils\Physics.cpp" />
     <ClCompile Include="src\abstractionClasses\Mouse.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\abstractionClasses\Mesh.cpp" />
@@ -151,7 +154,7 @@
     <ClCompile Include="src\abstractionClasses\shader.cpp" />
     <ClCompile Include="src\abstractionClasses\VAO.cpp" />
     <ClCompile Include="src\abstractionClasses\VBO.cpp" />
-    <ClCompile Include="src\LightCube.cpp" />
+    <ClCompile Include="src\LightSource.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui_demo.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui_draw.cpp" />
@@ -165,6 +168,9 @@
     <ClCompile Include="src\abstractionClasses\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Grid.h" />
+    <ClInclude Include="src\utils\Selector.h" />
+    <ClInclude Include="src\utils\Physics.h" />
     <ClInclude Include="src\abstractionClasses\Mouse.h" />
     <ClInclude Include="src\Object.h" />
     <ClInclude Include="src\abstractionClasses\Mesh.h" />
@@ -175,7 +181,7 @@
     <ClInclude Include="src\abstractionClasses\VAO.h" />
     <ClInclude Include="src\abstractionClasses\VBO.h" />
     <ClInclude Include="src\abstractionClasses\texture.h" />
-    <ClInclude Include="src\LightCube.h" />
+    <ClInclude Include="src\LightSource.h" />
     <ClInclude Include="src\utils\timeManager.h" />
     <ClInclude Include="src\vendor\imgui\imconfig.h" />
     <ClInclude Include="src\vendor\imgui\imgui.h" />
@@ -189,6 +195,7 @@
     <ClInclude Include="src\abstractionClasses\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\shaders\grid.shader" />
     <None Include="src\shaders\lit.shader" />
     <None Include="src\shaders\unlit.shader" />
   </ItemGroup>

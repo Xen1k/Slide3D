@@ -35,6 +35,7 @@ struct BasicLight
 uniform int numOfLights;
 uniform BasicLight lights[MAX_LIGHTS];
 
+uniform vec3 color;
 uniform float hasTexture;
 uniform sampler2D tex0;
 
@@ -61,5 +62,5 @@ void main()
 		diffuseLightsResult += CalculateDiffuseLight(lights[i]);
 
 	vec4 lightResult = vec4(diffuseLightsResult + ambientLight, 1.f);
-	FragColor = (hasTexture != 0.f ? texture(tex0, texCoord) : vec4(1.f)) * lightResult;
+	FragColor = (hasTexture != 0.f ? texture(tex0, texCoord) : vec4(color, 1.f)) * lightResult;
 }
