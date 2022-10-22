@@ -1,10 +1,13 @@
 #pragma once
-#include "shader.h"
+#include "Object.h"
+
 class Grid
 {
 private:
-	static Shader* shader;
+	static Shader* m_Shader;
+	static Mesh* m_GridMesh;
 public:
-	static void UpdateGrid();
+	static void Init();
+	static void Render();
 };
 

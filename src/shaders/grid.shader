@@ -4,13 +4,13 @@
 // Shared set between most vertex shaders
 /*layout(set = 0, binding = 0) uniform ViewUniforms {
     mat4 view;
-    mat4 proj;
+    mat4 projection;
     vec3 pos;
 } view;*/
 
 uniform mat4 view;
-uniform mat4 proj;
-uniform vec3 pos;
+uniform mat4 projection;
+//uniform vec3 pos;
 
 layout(location = 0) out float near;
 layout(location = 1) out float far;
@@ -40,9 +40,9 @@ void main()
     near = 0.01;
     far = 25;
     fragView = view;
-    fragProj = proj;
-    nearPoint = UnprojectPoint(p.x, p.y, 0.0, view, proj).xyz; // unprojecting on the near plane
-    farPoint = UnprojectPoint(p.x, p.y, 1.0, view, proj).xyz; // unprojecting on the far plane
+    fragProj = projection;
+    nearPoint = UnprojectPoint(p.x, p.y, 0.0, view, projection).xyz; // unprojecting on the near plane
+    farPoint = UnprojectPoint(p.x, p.y, 1.0, view, projection).xyz; // unprojecting on the far plane
     gl_Position = vec4(p, 1.0); // using directly the clipped coordinates
 }
 

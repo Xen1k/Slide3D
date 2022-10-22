@@ -1,6 +1,8 @@
 #pragma once
-#include "Mesh.h"
 #include <functional>
+
+class Object;
+#include "Mesh.h"
 
 class Object
 {
@@ -26,7 +28,7 @@ public:
 	/// <summary>
 	/// Sets all triangles coordinates in world space to trianglesList
 	/// </summary>
-	void UpdateTrianglesList();
+	void GenerateTrianglesList();
 
 	void SetShader(Shader* shader);
 	
@@ -34,7 +36,7 @@ public:
 	void SetPosition(glm::vec3 vec);
 	void Translate(float x, float y, float z);
 
-	void Render();
+	void Render(Shader* _shader = nullptr);
 	
 	/// <summary>
 	/// Increases number of light sources in shader

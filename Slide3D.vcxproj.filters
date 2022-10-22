@@ -87,6 +87,9 @@
     <ClCompile Include="src\Grid.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\utils\Primitives.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\abstractionClasses\shader.h">
@@ -162,6 +165,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Grid.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Primitives.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Grid.cpp" />
+    <ClCompile Include="src\utils\Primitives.cpp" />
     <ClCompile Include="src\utils\Selector.cpp" />
     <ClCompile Include="src\utils\Physics.cpp" />
     <ClCompile Include="src\abstractionClasses\Mouse.cpp" />
@@ -169,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Grid.h" />
+    <ClInclude Include="src\utils\Primitives.h" />
     <ClInclude Include="src\utils\Selector.h" />
     <ClInclude Include="src\utils\Physics.h" />
     <ClInclude Include="src\abstractionClasses\Mouse.h" />

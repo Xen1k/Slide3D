@@ -9,9 +9,11 @@ Camera::Camera(glm::vec3 position)
 	this->position = position;
 }
 
-void Camera::UpdateMatrix(Shader& shader, const char* uniform)
+void Camera::UpdateMatrix(Shader& shader)
 {
-	shader.SetUniformMat4f(uniform, GetProjectionMatrix() * GetViewMatrix());
+	shader.Bind();
+	shader.SetUniformMat4f("view", GetViewMatrix());
+	shader.SetUniformMat4f("projection", GetProjectionMatrix());
 }
 
 

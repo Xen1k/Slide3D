@@ -13,7 +13,6 @@ Triangle* Selector::SelectTriangleWithRay(glm::vec3& rayStart, glm::vec3& rayEnd
 
 	for (auto obj : Object::objectsList)
 	{
-		//obj->UpdateTrianglesList();
 		minRange = FLT_MAX;
 		for (auto triangleObj : obj->GetTrianglesList())
 		{

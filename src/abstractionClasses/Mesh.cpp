@@ -5,15 +5,16 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, Texture 
 	if(texture)
 		this->texture = texture;
 	SetVerticesAndIndices(vertices, indices);
-
 	SetVAO();
 }
 
-void Mesh::SetVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<GLuint>& indices)
+void Mesh::SetVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, bool updateTrianglesList)
 {
 	this->vertices = vertices;
 	this->indices = indices;
 	SetVAO();
+	if (connectedObject && updateTrianglesList)
+		connectedObject->GenerateTrianglesList();
 }
 
 void Mesh::ClearVerticesAndIndices()
@@ -21,6 +22,8 @@ void Mesh::ClearVerticesAndIndices()
 	this->vertices = {};
 	this->indices = {};
 	SetVAO();
+	if (connectedObject)
+		connectedObject->GenerateTrianglesList();
 }
 
 void Mesh::SetVAO()
@@ -54,7 +57,7 @@ void Mesh::Render(Shader& shader, Camera& camera)
 		shader.SetUniform1f("hasTexture", 0.f);
 	}
 
-	camera.UpdateMatrix(shader, "camMatrix");
+	camera.UpdateMatrix(shader);
 	
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }

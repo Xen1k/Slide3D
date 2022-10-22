@@ -14,7 +14,7 @@ class Camera
 private:
 	bool m_firstClick = true;
 	const float m_fovDeg = 90.f;
-	const float m_nearPlane = 0.1f;
+	const float m_nearPlane = 0.01f;
 	const float m_farPlane = 1000.f;
 	const glm::vec3 m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
 public:
@@ -28,7 +28,7 @@ public:
 
 	Camera(glm::vec3 position);
 
-	void UpdateMatrix(Shader& shader, const char* uniform);
+	void UpdateMatrix(Shader& shader);
 	glm::mat4 GetProjectionMatrix();
 	glm::mat4 GetViewMatrix();
 	void HandleInputs(GLFWwindow* window, bool stopMouseInput = false);
