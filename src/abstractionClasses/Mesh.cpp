@@ -59,5 +59,6 @@ void Mesh::Render(Shader& shader, Camera& camera)
 
 	camera.UpdateMatrix(shader);
 	
+	//glDrawElements(GL_POLYGON, indices.size(), GL_UNSIGNED_INT, 0);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }

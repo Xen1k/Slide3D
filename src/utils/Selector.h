@@ -23,4 +23,8 @@ public:
 	Object* selectedObject;
 	Triangle* selectedTriangle;
 	std::vector<int> selectedVerticesIndexNumbers;
+	/// <summary>
+	/// Returns num of selected vertices
+	/// </summary>
+	inline int GetNumOfSelections() const { return selectedVerticesIndexNumbers.size(); }
 };

@@ -163,7 +163,7 @@ void Primitives::SetCubeVertices(vector<Vertex>* vertices, vector<GLuint>* indic
 		Vertex{glm::vec3(1, -1, -1), glm::vec2(1, 0), glm::vec3(0, 0, -1)},
 		Vertex{glm::vec3(1, 1, -1), glm::vec2(1, 1), glm::vec3(0, 0, -1)},
 		Vertex{glm::vec3(-1, 1, -1), glm::vec2(0, 1), glm::vec3(0, 0, -1)},
-		// Rear
+		// Rear	
 		Vertex{glm::vec3(1, -1, -1), glm::vec2(0, 0), glm::vec3(1, 0, 0)},
 		Vertex{glm::vec3(1, -1, 1), glm::vec2(1, 0), glm::vec3(1, 0, 0)},
 		Vertex{glm::vec3(1, 1, 1), glm::vec2(1, 1), glm::vec3(1, 0, 0)},

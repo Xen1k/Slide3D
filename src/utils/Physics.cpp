@@ -1,21 +1,21 @@
 #include "Physics.h"
 #include "Mouse.h"
 
-bool Physics::CheckRayTriangleIntersect(Triangle triangleObj, glm::vec3 rayOrigin, glm::vec3 rayDir, glm::vec3* intersectPoint)
+bool Physics::CheckRayTriangleIntersect(Triangle selectionTriangleObj, glm::vec3 rayOrigin, glm::vec3 rayDir, glm::vec3* intersectPoint)
 {
 	float epsilon = 0.01f; // Accuracy
 	glm::vec3 e1, e2, p, s, q;
 	float t, u, v, tmp; // Uvt - Barycentric Coordinates
 
-	e1 = triangleObj.GetGlobalVertex(1) - triangleObj.GetGlobalVertex(0);
-	e2 = triangleObj.GetGlobalVertex(2) - triangleObj.GetGlobalVertex(0);
+	e1 = selectionTriangleObj.GetGlobalVertex(1) - selectionTriangleObj.GetGlobalVertex(0);
+	e2 = selectionTriangleObj.GetGlobalVertex(2) - selectionTriangleObj.GetGlobalVertex(0);
 
 	p = glm::cross(rayDir, e2);
 	tmp = glm::dot(p, e1);
 	if (tmp > -epsilon && tmp < epsilon) return false;
 
 	tmp = 1.0 / tmp;
-	s = rayOrigin - triangleObj.GetGlobalVertex(0);
+	s = rayOrigin - selectionTriangleObj.GetGlobalVertex(0);
 	u = tmp * glm::dot(s, p);
 	if (u < 0.0 || u > 1.0) return false;
 

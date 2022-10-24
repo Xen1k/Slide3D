@@ -14,14 +14,14 @@ Triangle* Selector::SelectTriangleWithRay(glm::vec3& rayStart, glm::vec3& rayEnd
 	for (auto obj : Object::objectsList)
 	{
 		minRange = FLT_MAX;
-		for (auto triangleObj : obj->GetTrianglesList())
+		for (auto selectionTriangleObj : obj->GetTrianglesList())
 		{
-			if (Physics::CheckRayTriangleIntersect(*triangleObj, rayStart, rayStart + rayEnd * 150.f, &intersectionPoint))
+			if (Physics::CheckRayTriangleIntersect(*selectionTriangleObj, rayStart, rayStart + rayEnd * 150.f, &intersectionPoint))
 			{
 				if (glm::length(intersectionPoint - Camera::main->position) < minRange)
 				{
 					minRange = glm::length(intersectionPoint - Camera::main->position);
-					lastSelectedTriangle = triangleObj;
+					lastSelectedTriangle = selectionTriangleObj;
 				}
 			}
 		}
@@ -33,6 +33,7 @@ Triangle* Selector::SelectTriangleWithRay(glm::vec3& rayStart, glm::vec3& rayEnd
 			lastSelection->selectedTriangle = lastSelectedTriangle;
 			for (int i = 0; i < 3; i++)
 				lastSelection->selectedVerticesIndexNumbers.push_back(lastSelectedTriangle->verticesIndexNumbers[i]);
+		
 			return lastSelectedTriangle;
 		}
 	}

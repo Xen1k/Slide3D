@@ -47,7 +47,7 @@ void InitializeDependenciesAndWindow(GLFWwindow** window);
 void PrintVector(glm::vec3 vec) { cout << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")" << endl; }
 
 
-Object* triangleObj;
+Object* selectionTriangleObj;
 Triangle* selectionTriangle;
 Shader* linesShader;
 
@@ -57,7 +57,7 @@ void SetSelectionTriangleVertices(Triangle triangle)
 	for(int i = 0; i < 3; i++)
 		vertices.push_back(Vertex{ triangle.GetGlobalVertex(i) * 1.0001f });
 	indices = { 0, 1, 2 };
-	triangleObj->mesh->SetVerticesAndIndices(vertices, indices, false);
+	selectionTriangleObj->mesh->SetVerticesAndIndices(vertices, indices, false);
 }
 
 
@@ -65,18 +65,15 @@ int main()
 {
 	GLFWwindow* window;
 	InitializeDependenciesAndWindow(&window);
-	Camera::main = new Camera(glm::vec3(0.0f, 0.0f, 1.0f));
+	Camera::main = new Camera(glm::vec3(0.0f, 1.0f, 1.0f));
 	Grid::Init();
 
-	triangleObj = new Object(new Mesh(), new Shader("./src/shaders/unlit.shader", ShaderType::Unlit));
+	selectionTriangleObj = new Object(new Mesh(), new Shader("./src/shaders/unlit.shader", ShaderType::Unlit));
 
 	Texture* texture = new Texture("./textures/pixel.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
-	Primitives::SetSphereVertices(&vertices, &indices, 0.5f, 9, 9);
+	Primitives::SetCubeVertices(&vertices, &indices);
 	Object *object = new Object(new Mesh(vertices, indices), new Shader("./src/shaders/lit.shader"));
 	object->shader->SetUniform3f("color", glm::vec3(1.f, 1.f, 1.f));
-
-	//linesShader = new Shader("./src/shaders/unlit.shader", ShaderType::Unlit);
-	//linesShader->SetUniform3f("color", glm::vec3(1.f, 0.f, 1.f));
 
 	LightSource light(glm::vec3(1.f, 1.f, 1.0f), 0, new Shader("./src/shaders/unlit.shader", ShaderType::Unlit));
 
@@ -88,8 +85,7 @@ int main()
 	bool showWireframe = true;
 	bool showGrid = true;
 
-	glEnable(GL_POLYGON_OFFSET_LINE);
-	glPolygonOffset(-1, -1);
+
 
 
 	while (!glfwWindowShouldClose(window))
@@ -106,7 +102,7 @@ int main()
 			Object* obj = Selector::lastSelection->selectedObject;
 			if (obj)
 			{
-				for (int i = 0; i < 3; i++)
+				for (int i = 0; i < Selector::lastSelection->GetNumOfSelections(); i++)
 				{
 					obj->mesh->vertices[Selector::lastSelection->selectedVerticesIndexNumbers[i]].position.x += 2 * Time::GetDeltaTime();
 				}
@@ -120,7 +116,7 @@ int main()
 		if (selectionTriangle)
 			SetSelectionTriangleVertices(*selectionTriangle);
 		else
-			triangleObj->mesh->ClearVerticesAndIndices();
+			selectionTriangleObj->mesh->ClearVerticesAndIndices();
 
 		if (glfwGetMouseButton(window, 1) == GLFW_PRESS)
 		{
@@ -133,7 +129,7 @@ int main()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		for (auto obj : Object::objectsList)
 		{
-			if (obj != triangleObj)
+			if (obj != selectionTriangleObj)
 			{
 				obj->shader->Bind();
 				obj->shader->SetUniform3f("color", glm::vec3(0.8f));
@@ -147,7 +143,7 @@ int main()
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			for (auto obj : Object::objectsList)
 			{
-				if (obj != triangleObj)
+				if (obj != selectionTriangleObj)
 				{
 					obj->shader->Bind();
 					obj->shader->SetUniform3f("color", glm::vec3(0.f));
@@ -245,7 +241,8 @@ void InitializeDependenciesAndWindow(GLFWwindow** window)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
-
+	glEnable(GL_POLYGON_OFFSET_LINE);
+	glPolygonOffset(-1, -1);
 	ImGui::CreateContext();
 	ImGui_ImplGlfw_InitForOpenGL(*window, true);
 	ImGui_ImplOpenGL3_Init("#version 130");
