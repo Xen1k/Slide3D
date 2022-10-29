@@ -3,6 +3,8 @@
 #include "Object.h"
 
 Selection* Selector::lastSelection = new Selection();
+SelectionMode Selector::selectionMode = SelectionMode::Face;
+
 
 Triangle* Selector::SelectTriangleWithRay(glm::vec3& rayStart, glm::vec3& rayEnd)
 {

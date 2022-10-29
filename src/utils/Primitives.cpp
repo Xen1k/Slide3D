@@ -131,70 +131,73 @@ void Primitives::SetPyramidVertices(vector<Vertex>*vertices, vector<GLuint>*indi
 
 }
 
-//void Primitives::SetCubeVertices(vector<Vertex>* vertices, vector<GLuint>* indices)
-//{
-//	*vertices = {
-//		Vertex{glm::vec3(-1, -1	, -1)},
-//		Vertex{glm::vec3(-1, 1, -1)},
-//		Vertex{glm::vec3(1, 1, -1)},
-//		Vertex{glm::vec3(1, -1, -1)},
-//		Vertex{glm::vec3(1, -1, 1)},
-//		Vertex{glm::vec3(1, 1, 1)},
-//		Vertex{glm::vec3(-1, 1, 1)},
-//		Vertex{glm::vec3(-1, -1, 1)},
-//	};
-//
-//	*indices = {
-//		0, 1, 2, 0, 2, 3,
-//		2, 3, 4, 2, 4, 5,
-//		4, 5, 6, 4, 6, 7,
-//		0, 6, 1, 0, 6, 7,
-//		0, 3, 4, 0, 4, 7,
-//		1, 2, 5, 1, 5, 6
-//	};
-//}
-
 void Primitives::SetCubeVertices(vector<Vertex>* vertices, vector<GLuint>* indices)
 {
-	*vertices =
-	{
-		// Left
-		Vertex{glm::vec3(-1, -1	, -1), glm::vec2(0, 0), glm::vec3(0, 0, -1)},
-		Vertex{glm::vec3(1, -1, -1), glm::vec2(1, 0), glm::vec3(0, 0, -1)},
-		Vertex{glm::vec3(1, 1, -1), glm::vec2(1, 1), glm::vec3(0, 0, -1)},
-		Vertex{glm::vec3(-1, 1, -1), glm::vec2(0, 1), glm::vec3(0, 0, -1)},
-		// Rear	
-		Vertex{glm::vec3(1, -1, -1), glm::vec2(0, 0), glm::vec3(1, 0, 0)},
-		Vertex{glm::vec3(1, -1, 1), glm::vec2(1, 0), glm::vec3(1, 0, 0)},
-		Vertex{glm::vec3(1, 1, 1), glm::vec2(1, 1), glm::vec3(1, 0, 0)},
-		Vertex{glm::vec3(1, 1, -1), glm::vec2(0, 1), glm::vec3(1, 0, 0)},
-		//Right
-		Vertex{glm::vec3(1, -1, 1), glm::vec2(0, 0), glm::vec3(0, 0, 1)},
+
+	*vertices = {
+		Vertex{glm::vec3(-1, -1	, -1), glm::vec2(0, 0), glm::vec3(0, -1, 0)},
 		Vertex{glm::vec3(-1, -1, 1), glm::vec2(0, 1), glm::vec3(0, 0, 1)},
-		Vertex{glm::vec3(-1, 1, 1), glm::vec2(1, 1), glm::vec3(0, 0, 1)},
-		Vertex{glm::vec3(1, 1, 1), glm::vec2(1, 0), glm::vec3(0, 0, 1)},
-		//Front
-		Vertex{glm::vec3(-1, -1, 1), glm::vec2(0, 0), glm::vec3(-1, 0, 0)},
-		Vertex{glm::vec3(-1, -1, -1), glm::vec2(0, 1), glm::vec3(-1, 0, 0)},
-		Vertex{glm::vec3(-1, 1, -1), glm::vec2(1, 1), glm::vec3(-1, 0, 0)},
-		Vertex{glm::vec3(-1, 1, 1), glm::vec2(1, 0), glm::vec3(-1, 0, 0)},
-		//Top
-		Vertex{glm::vec3(1, 1, 1), glm::vec2(0, 0), glm::vec3(0, 1, 0)},
-		Vertex{glm::vec3(-1, 1, 1), glm::vec2(0, 1), glm::vec3(0, 1, 0)},
-		Vertex{glm::vec3(-1, 1, -1), glm::vec2(1, 1), glm::vec3(0, 1, 0)},
-		Vertex{glm::vec3(1, 1, -1), glm::vec2(1, 0), glm::vec3(0, 1, 0)},
-		//Bottom
-		Vertex{glm::vec3(1, -1, 1), glm::vec2(0, 0), glm::vec3(0, -1, 0)},
-		Vertex{glm::vec3(-1, -1, 1), glm::vec2(0, 1), glm::vec3(0, -1, 0)},
-		Vertex{glm::vec3(-1, -1, -1), glm::vec2(1, 1), glm::vec3(0, -1, 0)},
-		Vertex{glm::vec3(1, -1, -1), glm::vec2(1, 0), glm::vec3(0, -1, 0)},
+		Vertex{glm::vec3(1, -1, -1), glm::vec2(1, 0), glm::vec3(0, 0, 0)},
+		Vertex{glm::vec3(1, -1, 1), glm::vec2(1, 1), glm::vec3(1, 0, 0)},
+		Vertex{glm::vec3(1, 1, -1), glm::vec2(0, 0), glm::vec3(0, 1, 0)},
+		Vertex{glm::vec3(1, 1, 1), glm::vec2(1, 0), glm::vec3(0, 0, 0)},
+		Vertex{glm::vec3(-1, 1, -1), glm::vec2(0, 1), glm::vec3(0, 0, -1)},
+		Vertex{glm::vec3(-1, 1, 1), glm::vec2(1, 1), glm::vec3(-1, 0, 0)},
 	};
 
-	indices->clear();
+	*indices = { 
+		0, 2, 3, 0, 3, 1, // front
+		4, 6, 7, 4, 7, 5, // back
+		3, 2, 4, 3, 4, 5, // right
+		7, 6, 0, 7, 0, 1, // left
+		6, 4, 2, 6, 2, 0, // bottom 
+		1, 3, 5, 1, 5, 7  // top
+	};
 
-	for (unsigned int i = 0; i < 18; i += 4)
-	{
-		indices->insert(indices->end(), { i, i + 1, i + 2 });
-		indices->insert(indices->end(), { i, i + 2, i + 3 });
-	}
+	
 }
+
+//void Primitives::SetCubeVertices(vector<Vertex>* vertices, vector<GLuint>* indices)
+//{
+//	*vertices =
+//	{
+//		// Left
+//		Vertex{glm::vec3(-1, -1	, -1), glm::vec2(0, 0), glm::vec3(0, 0, -1)},
+//		Vertex{glm::vec3(1, -1, -1), glm::vec2(1, 0), glm::vec3(0, 0, -1)},
+//		Vertex{glm::vec3(1, 1, -1), glm::vec2(1, 1), glm::vec3(0, 0, -1)},
+//		Vertex{glm::vec3(-1, 1, -1), glm::vec2(0, 1), glm::vec3(0, 0, -1)},
+//		// Rear	
+//		Vertex{glm::vec3(1, -1, -1), glm::vec2(0, 0), glm::vec3(1, 0, 0)},
+//		Vertex{glm::vec3(1, -1, 1), glm::vec2(1, 0), glm::vec3(1, 0, 0)},
+//		Vertex{glm::vec3(1, 1, 1), glm::vec2(1, 1), glm::vec3(1, 0, 0)},
+//		Vertex{glm::vec3(1, 1, -1), glm::vec2(0, 1), glm::vec3(1, 0, 0)},
+//		//Right
+//		Vertex{glm::vec3(1, -1, 1), glm::vec2(0, 0), glm::vec3(0, 0, 1)},
+//		Vertex{glm::vec3(-1, -1, 1), glm::vec2(0, 1), glm::vec3(0, 0, 1)},
+//		Vertex{glm::vec3(-1, 1, 1), glm::vec2(1, 1), glm::vec3(0, 0, 1)},
+//		Vertex{glm::vec3(1, 1, 1), glm::vec2(1, 0), glm::vec3(0, 0, 1)},
+//		//Front
+//		Vertex{glm::vec3(-1, -1, 1), glm::vec2(0, 0), glm::vec3(-1, 0, 0)},
+//		Vertex{glm::vec3(-1, -1, -1), glm::vec2(0, 1), glm::vec3(-1, 0, 0)},
+//		Vertex{glm::vec3(-1, 1, -1), glm::vec2(1, 1), glm::vec3(-1, 0, 0)},
+//		Vertex{glm::vec3(-1, 1, 1), glm::vec2(1, 0), glm::vec3(-1, 0, 0)},
+//		//Top
+//		Vertex{glm::vec3(1, 1, 1), glm::vec2(0, 0), glm::vec3(0, 1, 0)},
+//		Vertex{glm::vec3(-1, 1, 1), glm::vec2(0, 1), glm::vec3(0, 1, 0)},
+//		Vertex{glm::vec3(-1, 1, -1), glm::vec2(1, 1), glm::vec3(0, 1, 0)},
+//		Vertex{glm::vec3(1, 1, -1), glm::vec2(1, 0), glm::vec3(0, 1, 0)},
+//		//Bottom
+//		Vertex{glm::vec3(1, -1, 1), glm::vec2(0, 0), glm::vec3(0, -1, 0)},
+//		Vertex{glm::vec3(-1, -1, 1), glm::vec2(0, 1), glm::vec3(0, -1, 0)},
+//		Vertex{glm::vec3(-1, -1, -1), glm::vec2(1, 1), glm::vec3(0, -1, 0)},
+//		Vertex{glm::vec3(1, -1, -1), glm::vec2(1, 0), glm::vec3(0, -1, 0)},
+//	};
+//
+//	indices->clear();
+//
+//	for (unsigned int i = 0; i < 24; i += 4)
+//	{
+//		indices->insert(indices->end(), { i, i + 1, i + 2 });
+//		indices->insert(indices->end(), { i, i + 2, i + 3 });
+//	}
+//}

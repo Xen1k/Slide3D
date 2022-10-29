@@ -11,7 +11,7 @@ uniform mat4 view;
 uniform mat4 model;
 
 out vec2 texCoord;
-out vec3 normal;
+flat out vec3 surfaceNormal;
 out vec3 currentPosition;
 
 void main()
@@ -19,7 +19,7 @@ void main()
 	currentPosition = vec3(model * vec4(aPos, 1.f));
 	gl_Position = projection * view * vec4(currentPosition, 1.f);
 	texCoord = aTex;
-	normal = aNormal;
+	surfaceNormal = aNormal;
 }
 
 #shader fragment
@@ -41,8 +41,9 @@ uniform float hasTexture;
 uniform sampler2D tex0;
 
 in vec2 texCoord;
-in vec3 normal;
+flat in vec3 surfaceNormal;
 in vec3 currentPosition;
+
 
 out vec4 FragColor;
 
@@ -50,7 +51,7 @@ out vec4 FragColor;
 vec3 CalculateDiffuseLight(BasicLight light)
 {
 	vec3 lightDirection = normalize(light.position - currentPosition);
-	float diffuse = max(dot(normalize(normal), lightDirection), 0.f);
+	float diffuse = max(dot(normalize(surfaceNormal), lightDirection), 0.f);
 	return light.color * diffuse * light.intencity;
 }
 

@@ -16,6 +16,8 @@ public:
 	inline glm::mat4 GetModelMatrix() const { return m_ModelMatrix; }
 	inline std::vector<Triangle*> GetTrianglesList() const { return m_TrianglesList; }
 
+	void CalculateFlatNormals();
+
 	/// <summary>
 	/// List with all objects
 	/// </summary>
@@ -35,6 +37,9 @@ public:
 	void SetPosition(float x, float y, float z);
 	void SetPosition(glm::vec3 vec);
 	void Translate(float x, float y, float z);
+	void Translate(glm::vec3 v);
+
+	void SetColor(glm::vec3 color);
 
 	void Render(Shader* _shader = nullptr);
 	

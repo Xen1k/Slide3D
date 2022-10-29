@@ -12,13 +12,9 @@
 
 class Triangle {
 private:
-	void PrintVector(glm::vec3 vec)
-	{
-		std::cout << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")";
-	}
 	glm::mat4* m_ObjectModelMatrix;
 public:
-	Triangle(glm::vec3 *vertex1, glm::vec3 *vertex2, glm::vec3 *vertex3, std::initializer_list<unsigned int> indexNumbers, glm::mat4 *objectModel)
+	Triangle(Vertex* vertex1, Vertex* vertex2, Vertex* vertex3, std::initializer_list<unsigned int> indexNumbers, glm::mat4 *objectModel)
 	{
 		for (int i = 0; i < 3; i++)
 			verticesIndexNumbers[i] = indexNumbers.begin()[i];
@@ -27,29 +23,47 @@ public:
 		vertices[2] = vertex3;
 		m_ObjectModelMatrix = objectModel;
 	}
+
+	/// <summary>
+	/// Sets flat normal for the first triangle vertex (for flat shader normal)
+	/// </summary>
+	void SetFlatNormal()
+	{
+		vertices[0]->normal = Forward();
+	}
+
+	glm::vec3 Forward()
+	{
+		return glm::normalize(glm::cross(vertices[1]->position - vertices[0]->position, vertices[2]->position - vertices[0]->position));
+	}
+
+	/// <summary>
+	/// Does not calculate forward vector. Gets it from flat normal.
+	/// </summary>
+	glm::vec3 ForwardFromNormal()
+	{
+		return vertices[0]->normal;
+	}
+
 	/// <summary>
 	/// Index numbers of vertices in the mesh vertices vector
 	/// </summary>
 	unsigned int verticesIndexNumbers[3];
-	glm::vec3* vertices[3];
+	Vertex* vertices[3];
 
 	/// <summary>
 	///	Returns triangle's vertices in global coordinates 
 	/// </summary>
-	glm::vec3 GetGlobalVertex(int vertexIndex)
+	glm::vec3 GetGlobalVertexPosition(int vertexIndex)
 	{
-		return glm::vec3(*m_ObjectModelMatrix * glm::vec4(*vertices[vertexIndex], 1));
+		return glm::vec3(*m_ObjectModelMatrix * glm::vec4(vertices[vertexIndex]->position, 1));
 	}
 
-	void PrintVertices() {
-		std::cout << "[";
-		PrintVector(*vertices[0]);
-		std::cout << ", ";
-		PrintVector(*vertices[1]);
-		std::cout << ", ";
-		PrintVector(*vertices[2]);
-		std::cout << "]" << std::endl;;
+	glm::vec3 GetVertexPosition(int vertexIndex)
+	{
+		return vertices[vertexIndex]->position;
 	}
+
 };
 
 class Mesh;
@@ -68,6 +82,7 @@ public:
 
 	void SetVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, bool updateTrianglesList = true);
 	void ClearVerticesAndIndices();
+
 
 	Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, Texture* texture = nullptr);
 	Mesh() {};

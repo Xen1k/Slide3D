@@ -1,3 +1,4 @@
+#include <iostream>
 #include "camera.h"
 #include "timeManager.h"
 #include "Window.h"
@@ -51,11 +52,9 @@ void Camera::HandleInputs(GLFWwindow* window, bool stopMouseInput)
 	float height = Window::GetHeight();
 
 	// Handles mouse inputs
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS)
 	{
-		// Hides mouse cursor
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
 		// Prevents camera from jumping on the first click
 		if (m_firstClick)
 		{
@@ -63,10 +62,8 @@ void Camera::HandleInputs(GLFWwindow* window, bool stopMouseInput)
 			m_firstClick = false;
 		}
 
-		// Stores the coordinates of the cursor
 		double mouseX;
 		double mouseY;
-		// Fetches the coordinates of the cursor
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 
 		// Normalizes and shifts the coordinates of the cursor such that they begin in the middle of the screen
@@ -84,14 +81,11 @@ void Camera::HandleInputs(GLFWwindow* window, bool stopMouseInput)
 		// Rotates the Orientation left and right
 		m_Orientation = glm::rotate(m_Orientation, glm::radians(-rotY), m_Up);
 
-		// Sets mouse cursor to the middle of the screen so that it doesn't end up roaming around
 		glfwSetCursorPos(window, (width / 2), (height / 2));
 	}
-	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_RELEASE)
 	{
-		// Unhides cursor since camera is not looking around anymore
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		// Makes sure the next time the camera looks around it doesn't jump
 		m_firstClick = true;
 	}
 }

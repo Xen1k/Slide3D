@@ -25,6 +25,8 @@
 #include "Selector.h"
 #include "Grid.h"
 #include "Primitives.h"
+#include "MathUtils.h"
+#include "Settings.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -39,6 +41,8 @@ using std::cout;
 using std::endl;
 using std::vector;
 
+using namespace settings;
+
 vector<Vertex> vertices;
 
 vector<GLuint> indices;
@@ -49,13 +53,12 @@ void PrintVector(glm::vec3 vec) { cout << "(" << vec.x << ", " << vec.y << ", " 
 
 Object* selectionTriangleObj;
 Triangle* selectionTriangle;
-Shader* linesShader;
 
 void SetSelectionTriangleVertices(Triangle triangle)
 {
 	vertices.clear();
 	for(int i = 0; i < 3; i++)
-		vertices.push_back(Vertex{ triangle.GetGlobalVertex(i) * 1.0001f });
+		vertices.push_back(Vertex{ triangle.GetGlobalVertexPosition(i) * 1.001f});
 	indices = { 0, 1, 2 };
 	selectionTriangleObj->mesh->SetVerticesAndIndices(vertices, indices, false);
 }
@@ -86,7 +89,14 @@ int main()
 	bool showGrid = true;
 
 
-
+	bool dragMode = false;
+	glfwSetWindowUserPointer(window, &dragMode);
+	glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mode) {
+		bool* dragMode = (bool*)glfwGetWindowUserPointer(window);
+		if (key == GLFW_KEY_G && action == GLFW_PRESS)
+			*dragMode = !*dragMode;
+		}
+	);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -96,24 +106,9 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glLineWidth(1.5f / glm::distance(object->GetPosition(), Camera::main->position));
 
-	
-		if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS)
-		{
-			Object* obj = Selector::lastSelection->selectedObject;
-			if (obj)
-			{
-				for (int i = 0; i < Selector::lastSelection->GetNumOfSelections(); i++)
-				{
-					obj->mesh->vertices[Selector::lastSelection->selectedVerticesIndexNumbers[i]].position.x += 2 * Time::GetDeltaTime();
-				}
-				SetSelectionTriangleVertices(*selectionTriangle);
-				obj->mesh->SetVAO();
-			}
-		}
-
 		Camera::main->HandleInputs(window, mouseIsOverMeshGui);
 		
-		if (selectionTriangle)
+		if (selectionTriangle && Selector::selectionMode == SelectionMode::Face)
 			SetSelectionTriangleVertices(*selectionTriangle);
 		else
 			selectionTriangleObj->mesh->ClearVerticesAndIndices();
@@ -125,38 +120,65 @@ int main()
 			selectionTriangle = Selector::SelectTriangleWithRay(lastRayStart, lastRayEnd);
 		}
 
-
+#pragma region RENDERING
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		if (showGrid) Grid::Render();
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		// Filled polygons
+		selectionTriangleObj->SetColor(polygonSelectorColor);
 		for (auto obj : Object::objectsList)
 		{
 			if (obj != selectionTriangleObj)
-			{
-				obj->shader->Bind();
-				obj->shader->SetUniform3f("color", glm::vec3(0.8f));
-			}
+				obj->SetColor(Selector::selectionMode == SelectionMode::Object && Selector::lastSelection->selectedObject == obj ? polygonSelectorColor : defaultMeshColor);
 			obj->Render();
 		}
+		
+		if (lightIsEnabled) light.Render(*Camera::main);
 
+		// Wireframe
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+		glPolygonOffset(-1.5f, -1.5f);
+		selectionTriangleObj->SetColor(glm::vec3(1.f));
+		selectionTriangleObj->Render();
+
+		glPolygonOffset(-0.4f, -0.4f);
 		if (showWireframe)
 		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			for (auto obj : Object::objectsList)
 			{
 				if (obj != selectionTriangleObj)
 				{
-					obj->shader->Bind();
-					obj->shader->SetUniform3f("color", glm::vec3(0.f));
-					obj->Render(linesShader);
+					obj->SetColor(Selector::selectionMode == SelectionMode::Object && Selector::lastSelection->selectedObject == obj ? glm::vec3(1.f) : glm::vec3(0.f));
+					obj->Render();
 				}
 			}
 		}
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+#pragma endregion
 
-		if(lightIsEnabled) light.Render(*Camera::main);
 
-		if(showGrid) Grid::Render();
-
+		if (dragMode)
+		{
+			Object* obj = Selector::lastSelection->selectedObject;
+			if (obj)
+			{
+				if (Selector::selectionMode == SelectionMode::Face)
+				{
+					for (int i = 0; i < Selector::lastSelection->GetNumOfSelections(); i++)
+					{
+						obj->mesh->vertices[Selector::lastSelection->selectedVerticesIndexNumbers[i]].position += Math::DotV3(Mouse::GetRaysFromMousePointDelta(),
+							glm::distance(Camera::main->position, obj->GetPosition()));
+					}
+					if (selectionTriangle)
+						SetSelectionTriangleVertices(*selectionTriangle);
+					obj->CalculateFlatNormals();
+				}
+				else
+					obj->Translate(Math::DotV3(Mouse::GetRaysFromMousePointDelta(), glm::distance(Camera::main->position, obj->GetPosition())));
+			}
+		}
 
 #pragma region GUI
 		ImGui_ImplOpenGL3_NewFrame();
@@ -164,7 +186,7 @@ int main()
 		ImGui::NewFrame();
 
 		ImGui::Begin("Mesh/Texture/Light");
-		mouseIsOverMeshGui = ImGui::IsWindowHovered() || ImGui::IsWindowFocused();
+		mouseIsOverMeshGui = ImGui::IsWindowHovered();
 		ImGui::Text("Mesh");
 		if (ImGui::Button("Sphere"))
 		{
@@ -184,6 +206,11 @@ int main()
 			selectionTriangle = nullptr;
 			object->mesh->SetVerticesAndIndices(vertices, indices);
 		}
+		ImGui::Text("Normals");
+		if (ImGui::Button("Recalculate Flat"))
+			for (auto obj : Object::objectsList)
+				if (obj != selectionTriangleObj)
+					obj->CalculateFlatNormals();
 		ImGui::Text("View");
 		if (ImGui::Button("Switch Texture"))
 		{
@@ -195,18 +222,26 @@ int main()
 		{
 			for (auto obj : Object::objectsList)
 			{
-				if (obj->shader->type == ShaderType::Lit)
-					obj->SetShader(new Shader("./src/shaders/unlit.shader", ShaderType::Unlit));
-				else
-					obj->SetShader(new Shader("./src/shaders/lit.shader", ShaderType::Lit));
-				obj->shader->Bind();
-				obj->shader->SetUniform3f("color", glm::vec3(0.8f));
+				if (obj != selectionTriangleObj)
+				{
+					if (obj->shader->type == ShaderType::Lit)
+						obj->SetShader(new Shader("./src/shaders/unlit.shader", ShaderType::Unlit));
+					else
+						obj->SetShader(new Shader("./src/shaders/lit.shader", ShaderType::Lit));
+					obj->shader->Bind();
+					obj->shader->SetUniform3f("color", glm::vec3(0.8f));
+				}
 			}
 		}
 		if (ImGui::Button("Switch Wireframe"))
 			showWireframe = !showWireframe;
 		if (ImGui::Button("Switch Grid"))
 			showGrid = !showGrid;
+		ImGui::Text("Selection Mode");
+		if (ImGui::Button("Face"))
+			Selector::selectionMode = SelectionMode::Face;
+		if (ImGui::Button("Object"))
+			Selector::selectionMode = SelectionMode::Object;
 		ImGui::Text("Lights");
 		if (ImGui::Button("Switch light"))
 		{
@@ -219,8 +254,13 @@ int main()
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #pragma endregion
 
+
+		
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+		Mouse::SetLastCoords();
+		Mouse::SetLastRayFromMousePoint();
 		Time::Calculate();
 	}
 
@@ -242,6 +282,7 @@ void InitializeDependenciesAndWindow(GLFWwindow** window)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_POLYGON_OFFSET_LINE);
+	glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
 	glPolygonOffset(-1, -1);
 	ImGui::CreateContext();
 	ImGui_ImplGlfw_InitForOpenGL(*window, true);

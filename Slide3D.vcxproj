@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\utils\MathUtils.cpp" />
     <ClCompile Include="src\Grid.cpp" />
     <ClCompile Include="src\utils\Primitives.cpp" />
     <ClCompile Include="src\utils\Selector.cpp" />
@@ -169,6 +170,7 @@
     <ClCompile Include="src\abstractionClasses\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\utils\MathUtils.h" />
     <ClInclude Include="src\Grid.h" />
     <ClInclude Include="src\utils\Primitives.h" />
     <ClInclude Include="src\utils\Selector.h" />
@@ -184,6 +186,7 @@
     <ClInclude Include="src\abstractionClasses\VBO.h" />
     <ClInclude Include="src\abstractionClasses\texture.h" />
     <ClInclude Include="src\LightSource.h" />
+    <ClInclude Include="src\utils\Settings.h" />
     <ClInclude Include="src\utils\timeManager.h" />
     <ClInclude Include="src\vendor\imgui\imconfig.h" />
     <ClInclude Include="src\vendor\imgui\imgui.h" />

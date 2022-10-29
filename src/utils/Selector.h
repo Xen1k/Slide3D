@@ -4,6 +4,8 @@
 
 class Selection;
 
+enum class SelectionMode { Face, Object };
+
 class Selector
 {
 public:
@@ -12,7 +14,9 @@ public:
 	/// </summary>
 	static Triangle* SelectTriangleWithRay(glm::vec3& rayStart, glm::vec3& rayEnd);
 	static Selection* lastSelection;
+	static SelectionMode selectionMode;
 };
+
 
 /// <summary>
 /// Represents selected object and index numbers of vertices
@@ -28,3 +32,4 @@ public:
 	/// </summary>
 	inline int GetNumOfSelections() const { return selectedVerticesIndexNumbers.size(); }
 };
+

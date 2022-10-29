@@ -24,14 +24,22 @@ void Object::GenerateTrianglesList()
 	{
 		m_TrianglesList.push_back(
 			new Triangle(
-				&mesh->vertices[mesh->indices[i]].position,
-				&mesh->vertices[mesh->indices[i+1]].position,
-				&mesh->vertices[mesh->indices[i+2]].position,
+				&mesh->vertices[mesh->indices[i]],
+				&mesh->vertices[mesh->indices[i+1]],
+				&mesh->vertices[mesh->indices[i+2]],
 				{ mesh->indices[i], mesh->indices[i + 1], mesh->indices[i + 2] },
 				&m_ModelMatrix
 			)
 		);
 	}
+}
+
+
+void Object::CalculateFlatNormals()
+{
+	for (auto triangle : m_TrianglesList)
+		triangle->SetFlatNormal();
+	mesh->SetVAO();
 }
 
 void Object::SetShader(Shader* shader)
@@ -53,6 +61,13 @@ void Object::SetPosition(float x, float y, float z)
 	shader->SetUniformMat4f("model", m_ModelMatrix);
 }
 
+void Object::SetColor(glm::vec3 color)
+{
+	shader->Bind();
+	shader->SetUniform3f("color", color);
+	shader->Unbind();
+}
+
 void Object::SetPosition(glm::vec3 vec)
 {
 	SetPosition(vec.x, vec.y, vec.z);
@@ -62,6 +77,13 @@ void Object::Translate(float x, float y, float z)
 {
 	SetPosition(m_Position.x +  x, m_Position.y + y, m_Position.z + z);
 }
+
+void Object::Translate(glm::vec3 v)
+{
+	Translate(v.x, v.y, v.z);
+}
+
+
 
 void Object::Render(Shader *_shader)
 {
