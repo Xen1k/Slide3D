@@ -1,21 +1,22 @@
 #include "Physics.h"
 #include "Mouse.h"
 
-bool Physics::CheckRayTriangleIntersect(Triangle triangle, glm::vec3 rayOrigin, glm::vec3 rayDir, glm::vec3* intersectPoint)
+
+bool Physics::CheckRayTriangleIntersect(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, glm::vec3 rayOrigin, glm::vec3 rayDir, glm::vec3* intersectPoint)
 {
 	float epsilon = 0.01f; // Accuracy
 	glm::vec3 e1, e2, p, s, q;
 	float t, u, v, tmp; // Uvt - Barycentric Coordinates
 
-	e1 = triangle.GetGlobalVertexPosition(1) - triangle.GetGlobalVertexPosition(0);
-	e2 = triangle.GetGlobalVertexPosition(2) - triangle.GetGlobalVertexPosition(0);
+	e1 = v1 - v0;
+	e2 = v2 - v0;
 
 	p = glm::cross(rayDir, e2);
 	tmp = glm::dot(p, e1);
 	if (tmp > -epsilon && tmp < epsilon) return false;
 
 	tmp = 1.0 / tmp;
-	s = rayOrigin - triangle.GetGlobalVertexPosition(0);
+	s = rayOrigin - v0;
 	u = tmp * glm::dot(s, p);
 	if (u < 0.0 || u > 1.0) return false;
 
@@ -30,6 +31,18 @@ bool Physics::CheckRayTriangleIntersect(Triangle triangle, glm::vec3 rayOrigin, 
 	if (intersectPoint)
 		*intersectPoint = rayOrigin + t * rayDir;
 	return true;
+}
+
+bool Physics::CheckRayPolygonIntersect(Polygon& polygon, glm::vec3 rayOrigin, glm::vec3 rayDir, glm::vec3* intersectPoint)
+{
+	for (int i = 1; i < polygon.vertices.size() - 1; i++)
+		if (CheckRayTriangleIntersect(
+			polygon.GetGlobalVertexPosition(0), 
+			polygon.GetGlobalVertexPosition(i), 
+			polygon.GetGlobalVertexPosition(i + 1),
+			rayOrigin, rayDir, intersectPoint))
+			return true;
+	return false;
 }
 
 

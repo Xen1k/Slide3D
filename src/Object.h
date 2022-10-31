@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include "Polygon.h"
 
 class Object;
 #include "Mesh.h"
@@ -9,12 +10,19 @@ class Object
 private:
 	glm::vec3 m_Position = glm::vec3(0.f);
 	glm::mat4 m_ModelMatrix = glm::mat4(1.f);
-	std::vector<Triangle*> m_TrianglesList;
+	std::vector<Polygon*> m_PolygonsList;
 public:
-	Object(Mesh *mesh, Shader *shader);
+	Object(Mesh *mesh, Shader *shader, int drawMode = GL_POLYGON);
 	inline glm::vec3 GetPosition() const { return m_Position; }
 	inline glm::mat4 GetModelMatrix() const { return m_ModelMatrix; }
-	inline std::vector<Triangle*> GetTrianglesList() const { return m_TrianglesList; }
+	inline std::vector<Polygon*> GetPolygonsList() const { return m_PolygonsList; }
+
+	int drawMode;
+
+	/// <summary>
+	/// Specifies what to call: glMultiDrawElements or glDrawElements
+	/// </summary>
+	bool drawMulti = true;
 
 	void CalculateFlatNormals();
 
@@ -28,9 +36,9 @@ public:
 	static void CallForEachObject(std::function<void(Object*)> callback);
 
 	/// <summary>
-	/// Sets all triangles coordinates in world space to trianglesList
+	/// Sets all polygons coordinates in world space to polygonsList
 	/// </summary>
-	void GenerateTrianglesList();
+	void GeneratePolygonsList();
 
 	void SetShader(Shader* shader);
 	

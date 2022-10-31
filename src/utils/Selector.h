@@ -12,7 +12,7 @@ public:
 	/// <summary>
 	/// Highlights triangle selected with mouse raycasting
 	/// </summary>
-	static Triangle* SelectTriangleWithRay(glm::vec3& rayStart, glm::vec3& rayEnd);
+	static Polygon* SelectPolygonWithRay(glm::vec3& rayStart, glm::vec3& rayEnd);
 	static Selection* lastSelection;
 	static SelectionMode selectionMode;
 };
@@ -25,7 +25,7 @@ class Selection
 {
 public:
 	Object* selectedObject;
-	Triangle* selectedTriangle;
+	Polygon* selectedPolygon;
 	std::vector<int> selectedVerticesIndexNumbers;
 	/// <summary>
 	/// Returns num of selected vertices

@@ -13,4 +13,5 @@ public:
 	static void SetPyramidVertices(vector<Vertex>* vertices, vector<GLuint>* indices);
 	static void SetSphereVertices(vector<Vertex>* vertices, vector<GLuint>* indices, float radius, unsigned int rings, unsigned int sectors);
 	static void SetCubeVertices(vector<Vertex>* vertices, vector<GLuint>* indices);
+	static void SetCubeVertices(vector<Vertex>* vertices, vector<GLuint>* indices, vector<int>* multidrawVertsCount);
 };

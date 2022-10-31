@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Polygon.cpp" />
     <ClCompile Include="src\utils\MathUtils.cpp" />
     <ClCompile Include="src\Grid.cpp" />
     <ClCompile Include="src\utils\Primitives.cpp" />
@@ -170,6 +171,8 @@
     <ClCompile Include="src\abstractionClasses\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Polygon.h" />
+    <ClInclude Include="src\utils\Converter.h" />
     <ClInclude Include="src\utils\MathUtils.h" />
     <ClInclude Include="src\Grid.h" />
     <ClInclude Include="src\utils\Primitives.h" />

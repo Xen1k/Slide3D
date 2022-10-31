@@ -88,4 +88,4 @@ void LightSource::SetIntencity(float m_Intencity)
 	});
 }
 
-void LightSource::Render(Camera& camera) { Mesh::Render(*m_LightShader, camera); }
+void LightSource::Render(Camera& camera) { Mesh::Render(*m_LightShader, camera, GL_TRIANGLES, false); }

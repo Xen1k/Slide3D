@@ -14,5 +14,5 @@ void Grid::Init()
 
 void Grid::Render()
 {
-	m_GridMesh->Render(*m_Shader, *Camera::main);
+	m_GridMesh->Render(*m_Shader, *Camera::main, GL_TRIANGLES, false);
 }

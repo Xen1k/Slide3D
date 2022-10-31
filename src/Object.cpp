@@ -5,40 +5,45 @@
 std::vector<Object*> Object::objectsList;
 
 
-Object::Object(Mesh* mesh, Shader* shader) 
+Object::Object(Mesh* mesh, Shader* shader, int drawMode) : drawMode(drawMode)
 {
 	this->mesh = mesh;
 	this->shader = shader;
 	SetPosition(0.f, 0.f, 0.f);
-	GenerateTrianglesList();
+	GeneratePolygonsList();
 	this->mesh->connectedObject = this;
+	CalculateFlatNormals();
 	objectsList.push_back(this);
 }
 
-void Object::GenerateTrianglesList()
+void Object::GeneratePolygonsList()
 {
-	for (auto triangle : m_TrianglesList)
-		delete triangle;
-	m_TrianglesList.clear();
-	for (int i = 0; i < mesh->indices.size(); i += 3)
+	for (auto polygon : m_PolygonsList)
+		delete polygon;
+	m_PolygonsList.clear();
+
+	int previousVertsCount = 0;
+	vector<Vertex*> polygonVertices;
+	vector<unsigned int> polygonIndices;
+	for (int i = 0; i < mesh->multidrawVertsCount.size(); i++)
 	{
-		m_TrianglesList.push_back(
-			new Triangle(
-				&mesh->vertices[mesh->indices[i]],
-				&mesh->vertices[mesh->indices[i+1]],
-				&mesh->vertices[mesh->indices[i+2]],
-				{ mesh->indices[i], mesh->indices[i + 1], mesh->indices[i + 2] },
-				&m_ModelMatrix
-			)
-		);
+		polygonVertices.clear();
+		polygonIndices.clear();
+		for (int j = 0; j < mesh->multidrawVertsCount[i]; j++)
+		{
+			polygonVertices.push_back(&mesh->vertices[mesh->indices[previousVertsCount + j]]);
+			polygonIndices.push_back(mesh->indices[previousVertsCount + j]);
+		}
+		m_PolygonsList.push_back(new Polygon(polygonVertices, polygonIndices, &m_ModelMatrix));
+		previousVertsCount += mesh->multidrawVertsCount[i];
 	}
 }
 
 
 void Object::CalculateFlatNormals()
 {
-	for (auto triangle : m_TrianglesList)
-		triangle->SetFlatNormal();
+	for (auto polygon : m_PolygonsList)
+		polygon->SetFlatNormal();
 	mesh->SetVAO();
 }
 
@@ -92,7 +97,7 @@ void Object::Render(Shader *_shader)
 		_shader->Bind();
 		_shader->SetUniformMat4f("model", m_ModelMatrix);
 	}
-	mesh->Render(_shader ? *_shader : *shader, *Camera::main);
+	mesh->Render(_shader ? *_shader : *shader, *Camera::main, drawMode, drawMulti);
 }
 
 void Object::UpdateNumOfLightSourcesInShader()

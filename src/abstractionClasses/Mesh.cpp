@@ -1,21 +1,29 @@
 #include "Mesh.h"
+#include <stdexcept>
 
-Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, Texture *texture)
+Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, Texture* texture, std::vector <int>& multidrawVertsCount)
 {
-	if(texture)
+	if (texture)
 		this->texture = texture;
 	SetVerticesAndIndices(vertices, indices);
+	if (&multidrawVertsCount != nullptr)
+	{
+		this->multidrawVertsCount = multidrawVertsCount;
+		GenerateMultidrawStartIndices();
+	}
 	SetVAO();
 }
 
-void Mesh::SetVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, bool updateTrianglesList)
+void Mesh::SetVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, bool updatePolygonsList)
 {
 	this->vertices = vertices;
 	this->indices = indices;
 	SetVAO();
-	if (connectedObject && updateTrianglesList)
-		connectedObject->GenerateTrianglesList();
+	if (connectedObject && updatePolygonsList)
+		connectedObject->GeneratePolygonsList();
 }
+
+
 
 void Mesh::ClearVerticesAndIndices()
 {
@@ -23,7 +31,20 @@ void Mesh::ClearVerticesAndIndices()
 	this->indices = {};
 	SetVAO();
 	if (connectedObject)
-		connectedObject->GenerateTrianglesList();
+		connectedObject->GeneratePolygonsList();
+}
+
+void Mesh::GenerateMultidrawStartIndices()
+{
+	delete[] multidrawStartIndices;
+	multidrawStartIndices = new void* [multidrawVertsCount.size()];
+	int previousVertsCount = 0;
+	multidrawStartIndices[0] = 0;
+	for (int i = 0; i < multidrawVertsCount.size() - 1; i++)
+	{
+		multidrawStartIndices[i + 1] = reinterpret_cast<void*>((multidrawVertsCount[i] + previousVertsCount) * sizeof(unsigned int));
+		previousVertsCount += multidrawVertsCount[i];
+	}
 }
 
 void Mesh::SetVAO()
@@ -41,7 +62,7 @@ void Mesh::SetVAO()
 	EBO.Unbind();
 }
 
-void Mesh::Render(Shader& shader, Camera& camera)
+void Mesh::Render(Shader& shader, Camera& camera, int drawMode, bool drawMulti)
 {
 	shader.Bind();
 	m_VAO.Bind();
@@ -58,7 +79,18 @@ void Mesh::Render(Shader& shader, Camera& camera)
 	}
 
 	camera.UpdateMatrix(shader);
-	
-	//glDrawElements(GL_POLYGON, indices.size(), GL_UNSIGNED_INT, 0);
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+
+
+	if (drawMulti)
+	{
+		if (multidrawVertsCount.size() == 0)
+			std::cout << "You need to define multidrawVertsCount for polygon multi draw mode!" << std::endl;
+		else
+			glMultiDrawElements(drawMode, &multidrawVertsCount[0], GL_UNSIGNED_INT, multidrawStartIndices, multidrawVertsCount.size());
+	}
+	else
+	{
+		glDrawElements(drawMode, indices.size(), GL_UNSIGNED_INT, 0);
+	}
+
 }

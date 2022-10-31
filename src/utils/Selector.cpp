@@ -6,41 +6,40 @@ Selection* Selector::lastSelection = new Selection();
 SelectionMode Selector::selectionMode = SelectionMode::Face;
 
 
-Triangle* Selector::SelectTriangleWithRay(glm::vec3& rayStart, glm::vec3& rayEnd)
+Polygon* Selector::SelectPolygonWithRay(glm::vec3& rayStart, glm::vec3& rayEnd)
 {
 	glm::vec3 intersectionPoint;
 	float minRange = FLT_MAX;
 	int minIndex;
-	Triangle* lastSelectedTriangle = nullptr;
+	Polygon* lastSelectedPolygon = nullptr;
 
 	for (auto obj : Object::objectsList)
 	{
 		minRange = FLT_MAX;
-		for (auto selectionTriangleObj : obj->GetTrianglesList())
+		for (auto polygon : obj->GetPolygonsList())
 		{
-			if (Physics::CheckRayTriangleIntersect(*selectionTriangleObj, rayStart, rayStart + rayEnd * 150.f, &intersectionPoint))
+			if (Physics::CheckRayPolygonIntersect(*polygon, rayStart, rayStart + rayEnd * 150.f, &intersectionPoint))
 			{
 				if (glm::length(intersectionPoint - Camera::main->position) < minRange)
 				{
 					minRange = glm::length(intersectionPoint - Camera::main->position);
-					lastSelectedTriangle = selectionTriangleObj;
+					lastSelectedPolygon = polygon;
 				}
 			}
 		}
-		if (lastSelectedTriangle)
+		if (lastSelectedPolygon)
 		{
 			// Save last selection 
 			lastSelection->selectedVerticesIndexNumbers.clear();
 			lastSelection->selectedObject = obj;
-			lastSelection->selectedTriangle = lastSelectedTriangle;
-			for (int i = 0; i < 3; i++)
-				lastSelection->selectedVerticesIndexNumbers.push_back(lastSelectedTriangle->verticesIndexNumbers[i]);
-		
-			return lastSelectedTriangle;
+			lastSelection->selectedPolygon = lastSelectedPolygon;
+			for (int i = 0; i < lastSelectedPolygon->verticesIndexNumbers.size(); i++)
+				lastSelection->selectedVerticesIndexNumbers.push_back(lastSelectedPolygon->verticesIndexNumbers[i]);
+			return lastSelectedPolygon;
 		}
 	}
 	lastSelection->selectedObject = nullptr;
-	lastSelection->selectedTriangle = nullptr;
+	lastSelection->selectedPolygon = nullptr;
 	lastSelection->selectedVerticesIndexNumbers.clear();
 	return nullptr;
 }

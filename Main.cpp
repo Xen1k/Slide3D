@@ -44,23 +44,26 @@ using std::vector;
 using namespace settings;
 
 vector<Vertex> vertices;
-
 vector<GLuint> indices;
+vector<int> multidrawVertsCount;
 
 void InitializeDependenciesAndWindow(GLFWwindow** window);
 void PrintVector(glm::vec3 vec) { cout << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")" << endl; }
 
 
-Object* selectionTriangleObj;
-Triangle* selectionTriangle;
+Object* selectionPolygonObj;
+Polygon* selectionPolygon;
 
-void SetSelectionTriangleVertices(Triangle triangle)
+void SetSelectionPolygonVertices(Polygon polygon)
 {
 	vertices.clear();
-	for(int i = 0; i < 3; i++)
-		vertices.push_back(Vertex{ triangle.GetGlobalVertexPosition(i) * 1.001f});
-	indices = { 0, 1, 2 };
-	selectionTriangleObj->mesh->SetVerticesAndIndices(vertices, indices, false);
+	indices.clear();
+	for (int i = 0; i < polygon.vertices.size(); i++)
+	{
+		vertices.push_back(Vertex{ polygon.GetGlobalVertexPosition(i) * 1.003f });
+		indices.push_back(i);
+	}
+	selectionPolygonObj->mesh->SetVerticesAndIndices(vertices, indices, false);
 }
 
 
@@ -71,11 +74,13 @@ int main()
 	Camera::main = new Camera(glm::vec3(0.0f, 1.0f, 1.0f));
 	Grid::Init();
 
-	selectionTriangleObj = new Object(new Mesh(), new Shader("./src/shaders/unlit.shader", ShaderType::Unlit));
+	// FIX GL_TRIANGLES
+	selectionPolygonObj = new Object(new Mesh(), new Shader("./src/shaders/unlit.shader", ShaderType::Unlit), GL_POLYGON);
+	selectionPolygonObj->drawMulti = false;
 
 	Texture* texture = new Texture("./textures/pixel.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
-	Primitives::SetCubeVertices(&vertices, &indices);
-	Object *object = new Object(new Mesh(vertices, indices), new Shader("./src/shaders/lit.shader"));
+	Primitives::SetCubeVertices(&vertices, &indices, &multidrawVertsCount);
+	Object *object = new Object(new Mesh(vertices, indices, nullptr, multidrawVertsCount), new Shader("./src/shaders/lit.shader"));
 	object->shader->SetUniform3f("color", glm::vec3(1.f, 1.f, 1.f));
 
 	LightSource light(glm::vec3(1.f, 1.f, 1.0f), 0, new Shader("./src/shaders/unlit.shader", ShaderType::Unlit));
@@ -108,29 +113,30 @@ int main()
 
 		Camera::main->HandleInputs(window, mouseIsOverMeshGui);
 		
-		if (selectionTriangle && Selector::selectionMode == SelectionMode::Face)
-			SetSelectionTriangleVertices(*selectionTriangle);
+		if (selectionPolygon && Selector::selectionMode == SelectionMode::Face)
+			SetSelectionPolygonVertices(*selectionPolygon);
 		else
-			selectionTriangleObj->mesh->ClearVerticesAndIndices();
+			selectionPolygonObj->mesh->ClearVerticesAndIndices();
 
 		if (glfwGetMouseButton(window, 1) == GLFW_PRESS)
 		{
 			glm::vec3 lastRayStart = glm::vec3(Camera::main->position.x, Camera::main->position.y, Camera::main->position.z);
 			glm::vec3 lastRayEnd = Physics::CastRayFromScreenPoint();
-			selectionTriangle = Selector::SelectTriangleWithRay(lastRayStart, lastRayEnd);
+			selectionPolygon = Selector::SelectPolygonWithRay(lastRayStart, lastRayEnd);
 		}
 
 #pragma region RENDERING
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+
 		if (showGrid) Grid::Render();
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		// Filled polygons
-		selectionTriangleObj->SetColor(polygonSelectorColor);
+		selectionPolygonObj->SetColor(polygonSelectorColor);
 		for (auto obj : Object::objectsList)
 		{
-			if (obj != selectionTriangleObj)
+			if (obj != selectionPolygonObj)
 				obj->SetColor(Selector::selectionMode == SelectionMode::Object && Selector::lastSelection->selectedObject == obj ? polygonSelectorColor : defaultMeshColor);
 			obj->Render();
 		}
@@ -141,21 +147,22 @@ int main()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		glPolygonOffset(-1.5f, -1.5f);
-		selectionTriangleObj->SetColor(glm::vec3(1.f));
-		selectionTriangleObj->Render();
+		selectionPolygonObj->SetColor(glm::vec3(1.f));
+		selectionPolygonObj->Render();
 
 		glPolygonOffset(-0.4f, -0.4f);
 		if (showWireframe)
 		{
 			for (auto obj : Object::objectsList)
 			{
-				if (obj != selectionTriangleObj)
+				if (obj != selectionPolygonObj)
 				{
 					obj->SetColor(Selector::selectionMode == SelectionMode::Object && Selector::lastSelection->selectedObject == obj ? glm::vec3(1.f) : glm::vec3(0.f));
 					obj->Render();
 				}
 			}
 		}
+
 #pragma endregion
 
 
@@ -171,8 +178,8 @@ int main()
 						obj->mesh->vertices[Selector::lastSelection->selectedVerticesIndexNumbers[i]].position += Math::DotV3(Mouse::GetRaysFromMousePointDelta(),
 							glm::distance(Camera::main->position, obj->GetPosition()));
 					}
-					if (selectionTriangle)
-						SetSelectionTriangleVertices(*selectionTriangle);
+					if (selectionPolygon)
+						SetSelectionPolygonVertices(*selectionPolygon);
 					obj->CalculateFlatNormals();
 				}
 				else
@@ -191,25 +198,25 @@ int main()
 		if (ImGui::Button("Sphere"))
 		{
 			Primitives::SetSphereVertices(&vertices, &indices, 0.5f, 10, 10);
-			selectionTriangle = nullptr;
+			selectionPolygon = nullptr;
 			object->mesh->SetVerticesAndIndices(vertices, indices);
 		}
 		if (ImGui::Button("Pyramid"))
 		{
 			Primitives::SetPyramidVertices(&vertices, &indices);
-			selectionTriangle = nullptr;
+			selectionPolygon = nullptr;
 			object->mesh->SetVerticesAndIndices(vertices, indices);
 		}
 		if (ImGui::Button("Cube"))
 		{
-			Primitives::SetCubeVertices(&vertices, &indices);
-			selectionTriangle = nullptr;
+			Primitives::SetCubeVertices(&vertices, &indices, &multidrawVertsCount);
+			selectionPolygon = nullptr;
 			object->mesh->SetVerticesAndIndices(vertices, indices);
 		}
 		ImGui::Text("Normals");
 		if (ImGui::Button("Recalculate Flat"))
 			for (auto obj : Object::objectsList)
-				if (obj != selectionTriangleObj)
+				if (obj != selectionPolygonObj)
 					obj->CalculateFlatNormals();
 		ImGui::Text("View");
 		if (ImGui::Button("Switch Texture"))
@@ -222,7 +229,7 @@ int main()
 		{
 			for (auto obj : Object::objectsList)
 			{
-				if (obj != selectionTriangleObj)
+				if (obj != selectionPolygonObj)
 				{
 					if (obj->shader->type == ShaderType::Lit)
 						obj->SetShader(new Shader("./src/shaders/unlit.shader", ShaderType::Unlit));
