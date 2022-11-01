@@ -35,8 +35,10 @@ public:
 	/// </summary>
 	void** multidrawStartIndices;
 
+	void PrintVerticesPositions();
 
 	void GenerateMultidrawStartIndices();
+	void RemovePolygon(Polygon* polygon, bool setNewVAO = true);
 
 	Texture* texture;
 

@@ -5,7 +5,7 @@
 std::vector<Object*> Object::objectsList;
 
 
-Object::Object(Mesh* mesh, Shader* shader, int drawMode) : drawMode(drawMode)
+Object::Object(Mesh* mesh, Shader* shader, int drawMode, bool addToObjectsList) : drawMode(drawMode)
 {
 	this->mesh = mesh;
 	this->shader = shader;
@@ -13,7 +13,8 @@ Object::Object(Mesh* mesh, Shader* shader, int drawMode) : drawMode(drawMode)
 	GeneratePolygonsList();
 	this->mesh->connectedObject = this;
 	CalculateFlatNormals();
-	objectsList.push_back(this);
+	if(addToObjectsList)
+		objectsList.push_back(this);
 }
 
 void Object::GeneratePolygonsList()
@@ -25,16 +26,22 @@ void Object::GeneratePolygonsList()
 	int previousVertsCount = 0;
 	vector<Vertex*> polygonVertices;
 	vector<unsigned int> polygonIndices;
+	vector<unsigned int> polygonIndicesOfIndexNumbers; // Look indicesOfIndexNumbers in Polygon class
 	for (int i = 0; i < mesh->multidrawVertsCount.size(); i++)
 	{
 		polygonVertices.clear();
 		polygonIndices.clear();
+		polygonIndicesOfIndexNumbers.clear();
 		for (int j = 0; j < mesh->multidrawVertsCount[i]; j++)
 		{
 			polygonVertices.push_back(&mesh->vertices[mesh->indices[previousVertsCount + j]]);
 			polygonIndices.push_back(mesh->indices[previousVertsCount + j]);
+			polygonIndicesOfIndexNumbers.push_back(previousVertsCount + j);
 		}
 		m_PolygonsList.push_back(new Polygon(polygonVertices, polygonIndices, &m_ModelMatrix));
+		// Set indicesOfIndexNumbers
+		m_PolygonsList[m_PolygonsList.size() - 1]->indicesOfIndexNumbers = polygonIndicesOfIndexNumbers;
+		m_PolygonsList[m_PolygonsList.size() - 1]->indexOfMultidrawVertsCount = i;
 		previousVertsCount += mesh->multidrawVertsCount[i];
 	}
 }

@@ -26,6 +26,14 @@ public:
 	/// Index numbers of vertices in the mesh vertices vector
 	/// </summary>
 	vector<unsigned int> verticesIndexNumbers;
+	/// <summary>
+	/// Indices of vertices index numbers in object's indices array
+	/// </summary>
+	vector<unsigned int> indicesOfIndexNumbers;
+	/// <summary>
+	/// Index of current polygon in multidrawVertsCount array of the mesh
+	/// </summary>
+	unsigned int indexOfMultidrawVertsCount;
 	vector<Vertex*> vertices;
 
 	/// <summary>

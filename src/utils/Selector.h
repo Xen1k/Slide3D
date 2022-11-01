@@ -24,6 +24,7 @@ public:
 class Selection
 {
 public:
+	void Clear();
 	Object* selectedObject;
 	Polygon* selectedPolygon;
 	std::vector<int> selectedVerticesIndexNumbers;

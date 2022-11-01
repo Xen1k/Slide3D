@@ -12,7 +12,7 @@ private:
 	glm::mat4 m_ModelMatrix = glm::mat4(1.f);
 	std::vector<Polygon*> m_PolygonsList;
 public:
-	Object(Mesh *mesh, Shader *shader, int drawMode = GL_POLYGON);
+	Object(Mesh *mesh, Shader *shader, int drawMode = GL_POLYGON, bool addToObjectsList = true);
 	inline glm::vec3 GetPosition() const { return m_Position; }
 	inline glm::mat4 GetModelMatrix() const { return m_ModelMatrix; }
 	inline std::vector<Polygon*> GetPolygonsList() const { return m_PolygonsList; }

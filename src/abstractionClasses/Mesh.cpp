@@ -14,16 +14,49 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, Texture*
 	SetVAO();
 }
 
+void Mesh::RemovePolygon(Polygon* polygon, bool setNewVAO)
+{
+	for (int i = 0; i < polygon->indicesOfIndexNumbers.size(); i++)
+	{
+		// Indices should be in the right order!
+		indices[polygon->indicesOfIndexNumbers[i]] = indices.back();
+		indices.pop_back();
+	}
+	multidrawVertsCount[polygon->indexOfMultidrawVertsCount] = multidrawVertsCount.back();
+	multidrawVertsCount.pop_back();
+	if (setNewVAO)
+	{
+		if (connectedObject)
+		{
+			connectedObject->GeneratePolygonsList();
+			connectedObject->CalculateFlatNormals();
+		}
+		GenerateMultidrawStartIndices();
+		SetVAO();
+	}
+}
+
+
 void Mesh::SetVerticesAndIndices(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, bool updatePolygonsList)
 {
 	this->vertices = vertices;
 	this->indices = indices;
 	SetVAO();
-	if (connectedObject && updatePolygonsList)
+
+	if (!connectedObject)
+		return;
+	connectedObject->CalculateFlatNormals();
+	if (updatePolygonsList)
 		connectedObject->GeneratePolygonsList();
 }
 
 
+void Mesh::PrintVerticesPositions()
+{
+	std::cout << "Vertices positions list:" << std::endl;
+	for (auto v : vertices)
+		std::cout << "(" << v.position.x << ", " << v.position.y << ", " << v.position.z << ")\n";
+}
 
 void Mesh::ClearVerticesAndIndices()
 {

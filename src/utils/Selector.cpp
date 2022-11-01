@@ -5,7 +5,6 @@
 Selection* Selector::lastSelection = new Selection();
 SelectionMode Selector::selectionMode = SelectionMode::Face;
 
-
 Polygon* Selector::SelectPolygonWithRay(glm::vec3& rayStart, glm::vec3& rayEnd)
 {
 	glm::vec3 intersectionPoint;
@@ -42,4 +41,12 @@ Polygon* Selector::SelectPolygonWithRay(glm::vec3& rayStart, glm::vec3& rayEnd)
 	lastSelection->selectedPolygon = nullptr;
 	lastSelection->selectedVerticesIndexNumbers.clear();
 	return nullptr;
+}
+
+
+void Selection::Clear()
+{
+	selectedObject = nullptr;
+	selectedPolygon = nullptr;
+	selectedVerticesIndexNumbers.clear();;
 }

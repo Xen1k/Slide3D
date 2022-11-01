@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\SelectionPolygon.cpp" />
     <ClCompile Include="src\Polygon.cpp" />
     <ClCompile Include="src\utils\MathUtils.cpp" />
     <ClCompile Include="src\Grid.cpp" />
@@ -158,6 +159,7 @@
     <ClCompile Include="src\abstractionClasses\VAO.cpp" />
     <ClCompile Include="src\abstractionClasses\VBO.cpp" />
     <ClCompile Include="src\LightSource.cpp" />
+    <ClCompile Include="src\utils\Settings.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui_demo.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui_draw.cpp" />
@@ -171,6 +173,7 @@
     <ClCompile Include="src\abstractionClasses\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SelectionPolygon.h" />
     <ClInclude Include="src\Polygon.h" />
     <ClInclude Include="src\utils\Converter.h" />
     <ClInclude Include="src\utils\MathUtils.h" />
