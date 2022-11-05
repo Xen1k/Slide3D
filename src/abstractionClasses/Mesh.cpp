@@ -1,5 +1,6 @@
 #include "Mesh.h"
 #include <stdexcept>
+#include <algorithm>
 
 Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, Texture* texture, std::vector <int>& multidrawVertsCount)
 {
@@ -65,6 +66,156 @@ void Mesh::ClearVerticesAndIndices()
 	SetVAO();
 	if (connectedObject)
 		connectedObject->GeneratePolygonsList();
+}
+
+void Mesh::PrintIndices()
+{
+	int overallVertsCount = 0;
+	for (int i = 0; i < multidrawVertsCount.size(); i++)
+	{
+		for (int j = overallVertsCount; j < overallVertsCount + multidrawVertsCount[i]; j++)
+			std::cout << indices[j] << " ";
+		overallVertsCount += multidrawVertsCount[i];
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+}
+
+
+
+bool Mesh::CheckIndicesOrderForFlatNormals()
+{
+	std::map<unsigned int, unsigned int> occupiedIndices = FindFlatNormalsOccupiedIndices();
+	for (auto it = occupiedIndices.begin(); it != occupiedIndices.end(); it++)
+	{
+		if (it->second > 1)
+			return false;
+	}
+	return true;
+}
+
+std::map<unsigned int, unsigned int> Mesh::FindFlatNormalsOccupiedIndices()
+{
+	int overallVertsCount = 0;
+	std::map<unsigned int, unsigned int> occupiedIndices;
+	for (int i = 0; i < multidrawVertsCount.size(); i++) {
+		occupiedIndices[indices[overallVertsCount]]++;
+		overallVertsCount += multidrawVertsCount[i];
+	}
+	return occupiedIndices;
+}
+
+void Mesh::RotatePolygonIndices(int polygonIndex)
+{
+	// polygon index: 
+	// 0: 0, 1, 2, 3
+	// 1: 1, 2, 3, 0
+	// ...
+	int numOfVertsBeforePolygon = 0;
+	for (int i = 0; i < multidrawVertsCount.size(); i++)
+	{
+		if (i == polygonIndex)
+			break;
+		numOfVertsBeforePolygon += multidrawVertsCount[i];
+	}
+	int temp = indices[numOfVertsBeforePolygon];
+	for (int i = 0; i < multidrawVertsCount[polygonIndex] - 1; i++)
+		indices[numOfVertsBeforePolygon + i] = indices[numOfVertsBeforePolygon + i + 1];
+	indices[numOfVertsBeforePolygon + multidrawVertsCount[polygonIndex] - 1] = temp;
+}
+
+int Mesh::GetFirstPolygonVertexIndex(int polygonIndex)
+{
+	int numOfVertsBeforePolygon = 0;
+	for (int i = 0; i < multidrawVertsCount.size(); i++)
+	{
+		if (i == polygonIndex)
+			return indices[numOfVertsBeforePolygon];
+		numOfVertsBeforePolygon += multidrawVertsCount[i];
+	}
+	return -1;
+}
+
+vector<unsigned int> Mesh::GetFirstPolygonsVerticesIndices()
+{
+	vector<unsigned int> firstIndices;
+	int numOfVertsBeforePolygon = 0;
+	for (int i = 0; i < multidrawVertsCount.size(); i++)
+	{
+		firstIndices.push_back(indices[numOfVertsBeforePolygon]);
+		numOfVertsBeforePolygon += multidrawVertsCount[i];
+	}
+	return firstIndices;
+}
+
+
+
+void Mesh::PrepareIndicesForFlatNormals()
+{
+	std::map<unsigned int, unsigned int> occupiedIndices = FindFlatNormalsOccupiedIndices();
+	vector<unsigned int> indNumsOfRotatedIndices;
+	int overallVertsCount = 0;
+	bool indicesWereEdited;
+	auto it = occupiedIndices.begin();
+	for (;;)
+	{
+		indicesWereEdited = false;
+		overallVertsCount = 0;
+		if (it->second > 1)
+		{
+			for (int i = 0; i < multidrawVertsCount.size(); i++)
+			{
+				if (indices[overallVertsCount] == it->first)
+				{
+					if (std::find(indNumsOfRotatedIndices.begin(), indNumsOfRotatedIndices.end(), overallVertsCount) != indNumsOfRotatedIndices.end())
+						continue;
+
+					auto firstPolygonsIndices = GetFirstPolygonsVerticesIndices();
+					bool foundAnotherSameFirstIndex = false;
+
+					for (int j = 0; j < multidrawVertsCount[i]; j++)
+					{
+						foundAnotherSameFirstIndex = false;
+						RotatePolygonIndices(i);
+						for (int k = 0; k < multidrawVertsCount.size(); k++)
+						{
+							if (k != i && GetFirstPolygonVertexIndex(i) == GetFirstPolygonsVerticesIndices()[k])
+							{
+								foundAnotherSameFirstIndex = true;
+								break;
+							}
+						}
+
+						if (!foundAnotherSameFirstIndex)
+						{
+							std::cout << "!!!!!!!!!!!!!!!!!";
+							indNumsOfRotatedIndices.push_back(overallVertsCount);
+							break;
+						}
+					}
+					// Find occupied indices again
+					occupiedIndices = FindFlatNormalsOccupiedIndices();
+					it = occupiedIndices.begin();
+					indicesWereEdited = true;
+					PrintIndices();
+					break;
+				}
+				overallVertsCount += multidrawVertsCount[i];
+			}
+		}
+		if (!indicesWereEdited)
+			it++;
+		if (it == occupiedIndices.end())
+		{
+			//if(CheckIndicesOrderForFlatNormals())
+				break;
+			/*occupiedIndices = FindFlatNormalsOccupiedIndices();
+			it = occupiedIndices.begin();*/
+			//indNumsOfRotatedIndices.clear();
+		}
+	 }
+
+
 }
 
 void Mesh::GenerateMultidrawStartIndices()

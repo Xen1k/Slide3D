@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <initializer_list>
+#include <map>
 
 #include "VAO.h"
 #include "EBO.h"
@@ -22,6 +23,23 @@ class Mesh
 {
 private:
 	VAO m_VAO;
+
+	/// <summary>
+	/// Find Indices that are already used for normals [actual index, num of usages]
+	/// </summary>
+	std::map<unsigned int, unsigned int> FindFlatNormalsOccupiedIndices();
+	bool CheckIndicesOrderForFlatNormals();
+
+	/// <summary>
+	/// 0, 1, 2, 3 => 0
+	/// </summary>
+	int GetFirstPolygonVertexIndex(int polygonIndex);
+
+	/// <summary>
+	/// 0, 1, 2, 3;	 3, 4, 5, 6 => 0, 3
+	/// </summary>
+	vector<unsigned int> GetFirstPolygonsVerticesIndices();
+
 public:
 	void SetVAO();
 	std::vector<Vertex> vertices;
@@ -36,6 +54,20 @@ public:
 	void** multidrawStartIndices;
 
 	void PrintVerticesPositions();
+
+	void PrintIndices();
+
+	/// <summary>
+	/// Rotate polygon's indices so that each polygon have it's own first vertex for flat normal
+	/// </summary>
+	void PrepareIndicesForFlatNormals();
+
+	/// <summary>
+	/// 0, 1, 2, 3 -> 1, 2, 3, 0
+	/// </summary>
+	void RotatePolygonIndices(int polygonIndex);
+
+
 
 	void GenerateMultidrawStartIndices();
 	void RemovePolygon(Polygon* polygon, bool setNewVAO = true);

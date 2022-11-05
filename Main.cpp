@@ -117,6 +117,7 @@ int main()
 					obj->mesh->indices.push_back(newIndices[0]);
 					obj->mesh->indices.push_back(newIndices[selectedPolygon->vertices.size() - 1]);
 
+
 					// Vertices
 					vector<Vertex> newVertices;
 					for (auto vertex : selectedPolygon->vertices)
@@ -131,8 +132,8 @@ int main()
 
 					obj->mesh->GenerateMultidrawStartIndices();
 					obj->GeneratePolygonsList();
+					//obj->mesh->PrepareIndicesForFlatNormals();
 					obj->mesh->SetVAO();
-
 					
 				}
 			}
