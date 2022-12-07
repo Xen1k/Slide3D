@@ -61,7 +61,8 @@ int main()
 	Camera::main = new Camera(glm::vec3(0.0f, 1.0f, 1.0f));
 	Grid::Init();
 
-	SelectionPolygon* selectionPolygon = new SelectionPolygon();
+
+	SelectionPolygon::GetInstance().Initialize();
 
 	Texture* texture = new Texture("./textures/pixel.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
 	Primitives::SetCubeVertices(&vertices, &indices, &multidrawVertsCount);
@@ -89,65 +90,15 @@ int main()
 			}
 			else if (key == GLFW_KEY_E && action == GLFW_PRESS)
 			{
-				// extrude
-				auto obj = Selector::lastSelection->selectedObject;
-				auto selectedPolygon = Selector::lastSelection->selectedPolygon;
-				if (obj && selectedPolygon)
-				{
-					// Remove old polygon
-					obj->mesh->RemovePolygon(selectedPolygon, false);
-
-					vector<unsigned int> newIndices;
-					// Indices
-					for (int i = 0; i < selectedPolygon->verticesIndexNumbers.size(); i++)
-					{
-						obj->mesh->indices.push_back(obj->mesh->vertices.size() + i);
-						newIndices.push_back(obj->mesh->vertices.size() + i);
-					}
-					for (int i = 0; i < selectedPolygon->vertices.size() - 1; i++)
-					{
-						obj->mesh->indices.push_back(selectedPolygon->verticesIndexNumbers[i]);
-						obj->mesh->indices.push_back(selectedPolygon->verticesIndexNumbers[i + 1]);
-						obj->mesh->indices.push_back(newIndices[i + 1]);
-						obj->mesh->indices.push_back(newIndices[i]);
-					}
-
-					obj->mesh->indices.push_back(selectedPolygon->verticesIndexNumbers[selectedPolygon->vertices.size() - 1]);
-					obj->mesh->indices.push_back(selectedPolygon->verticesIndexNumbers[0]);
-					obj->mesh->indices.push_back(newIndices[0]);
-					obj->mesh->indices.push_back(newIndices[selectedPolygon->vertices.size() - 1]);
-
-
-					// Vertices
-					vector<Vertex> newVertices;
-					for (auto vertex : selectedPolygon->vertices)
-					{
-						newVertices.push_back(*vertex);
-						newVertices[newVertices.size() - 1].position += Math::DotV3(selectedPolygon->Forward(), 1.5f);
-					}
-					obj->mesh->vertices.insert(obj->mesh->vertices.end(), newVertices.begin(), newVertices.end());
-
-					for(int i = 0; i < selectedPolygon->vertices.size() + 1 /* Sides + new front face */; i++)
-						obj->mesh->multidrawVertsCount.push_back(selectedPolygon->verticesIndexNumbers.size());
-
-					obj->mesh->GenerateMultidrawStartIndices();
-					obj->GeneratePolygonsList();
-					//obj->mesh->PrepareIndicesForFlatNormals();
-					obj->mesh->SetVAO();
-					
-				}
+				auto& obj = Selector::lastSelection->selectedObject;
+				if (obj)
+					obj->ExtrudeSelection();
 			}
 			else if (key == GLFW_KEY_DELETE && action == GLFW_PRESS)
 			{
-				// remove polygon
-				auto obj = Selector::lastSelection->selectedObject;
-				auto selectedPolygon = Selector::lastSelection->selectedPolygon;
-				if (obj && selectedPolygon)
-				{
-					obj->mesh->RemovePolygon(selectedPolygon);
-					Selector::lastSelection->Clear();
-					// remove selection polygon
-				}
+				auto& obj = Selector::lastSelection->selectedObject;
+				if (obj)
+					obj->RemoveSelectedPolygon();
 			}
 		}
 	);
@@ -162,16 +113,16 @@ int main()
 
 		Camera::main->HandleInputs(window, mouseIsOverMeshGui);
 		
-		if (selectionPolygon->polygon && Selector::selectionMode == SelectionMode::Face)
-			selectionPolygon->UpdateVertices();
+		if (SelectionPolygon::GetInstance().polygon && Selector::selectionMode == SelectionMode::Face)
+			SelectionPolygon::GetInstance().UpdateVertices();
 		else
-			selectionPolygon->polygonObject->mesh->ClearVerticesAndIndices();
+			SelectionPolygon::GetInstance().polygonObject->mesh->ClearVerticesAndIndices();
 
 		if (glfwGetMouseButton(window, 1) == GLFW_PRESS)
 		{
 			glm::vec3 lastRayStart = glm::vec3(Camera::main->position.x, Camera::main->position.y, Camera::main->position.z);
 			glm::vec3 lastRayEnd = Physics::CastRayFromScreenPoint();
-			selectionPolygon->polygon = Selector::SelectPolygonWithRay(lastRayStart, lastRayEnd);
+			SelectionPolygon::GetInstance().polygon = Selector::SelectPolygonWithRay(lastRayStart, lastRayEnd);
 		}
 
 #pragma region RENDERING
@@ -182,13 +133,13 @@ int main()
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		// Filled polygons
-		selectionPolygon->SetDefaultColor();
+		SelectionPolygon::GetInstance().SetDefaultColor();
 		for (auto obj : Object::objectsList)
 		{
 			obj->SetColor(Selector::selectionMode == SelectionMode::Object && Selector::lastSelection->selectedObject == obj ? polygonSelectorColor : defaultMeshColor);
 			obj->Render();
 		}
-		selectionPolygon->Render();
+		SelectionPolygon::GetInstance().Render();
 
 		if (lightIsEnabled) light.Render(*Camera::main);
 
@@ -196,8 +147,8 @@ int main()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		glPolygonOffset(-1.5f, -1.5f);
-		selectionPolygon->SetColor(glm::vec3(1.f));
-		selectionPolygon->Render();
+		SelectionPolygon::GetInstance().SetColor(glm::vec3(1.f));
+		SelectionPolygon::GetInstance().Render();
 
 		glPolygonOffset(-0.4f, -0.4f);
 		if (showWireframe)
@@ -208,7 +159,7 @@ int main()
 				obj->Render();
 			}
 		}
-		selectionPolygon->Render();
+		SelectionPolygon::GetInstance().Render();
 
 #pragma endregion
 
@@ -225,8 +176,8 @@ int main()
 						obj->mesh->vertices[Selector::lastSelection->selectedVerticesIndexNumbers[i]].position += Math::DotV3(Mouse::GetRaysFromMousePointDelta(),
 							glm::distance(Camera::main->position, obj->GetPosition()));
 					}
-					if (selectionPolygon->polygon)
-						selectionPolygon->UpdateVertices();
+					if (SelectionPolygon::GetInstance().polygon)
+						SelectionPolygon::GetInstance().UpdateVertices();
 					obj->CalculateFlatNormals();
 				}
 				else
@@ -236,10 +187,21 @@ int main()
 			}
 		}
 
+		Mouse::SetLastCoords();
+		Mouse::SetLastRayFromMousePoint();
+
 #pragma region GUI
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+
+		ImGui::Begin("Controls", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+		ImGui::SetWindowSize(ImVec2(Window::GetWidth(), 90));
+		ImGui::SetWindowPos(ImVec2(0, Window::GetHeight() - ImGui::GetWindowSize().y));
+		ImGui::Text("E - Extrude");
+		ImGui::Text("Delete - Remove selected polygon");
+		ImGui::Text("G - Switch transformation (move) mode");
+		ImGui::End();
 
 		ImGui::Begin("Mesh/Texture/Light");
 		mouseIsOverMeshGui = ImGui::IsWindowHovered();
@@ -247,7 +209,7 @@ int main()
 		if (ImGui::Button("Cube"))
 		{
 			Primitives::SetCubeVertices(&vertices, &indices, &multidrawVertsCount);
-			selectionPolygon->polygon = nullptr;
+			SelectionPolygon::GetInstance().polygon = nullptr;
 			Selector::lastSelection->Clear();
 			object->mesh->multidrawVertsCount = multidrawVertsCount;
 			object->mesh->SetVerticesAndIndices(vertices, indices);
@@ -298,12 +260,9 @@ int main()
 #pragma endregion
 
 
-		
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-		Mouse::SetLastCoords();
-		Mouse::SetLastRayFromMousePoint();
 		Time::Calculate();
 	}
 

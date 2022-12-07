@@ -1,10 +1,17 @@
 #include "SelectionPolygon.h"
 #include "Settings.h"
 
-SelectionPolygon::SelectionPolygon()
+void SelectionPolygon::Initialize()
 {
 	polygonObject = new Object(new Mesh(), new Shader("./src/shaders/unlit.shader", ShaderType::Unlit), GL_POLYGON, false);
 	polygonObject->drawMulti = false;
+}
+
+void SelectionPolygon::Clear()
+{
+	m_Vertices.clear();
+	m_Indices.clear();
+	polygonObject->mesh->SetVerticesAndIndices(m_Vertices, m_Indices, false);
 }
 
 void SelectionPolygon::UpdateVertices()

@@ -23,7 +23,8 @@ class Mesh
 {
 private:
 	VAO m_VAO;
-
+	VBO *m_VBO;
+	EBO *m_EBO;
 	/// <summary>
 	/// Find Indices that are already used for normals [actual index, num of usages]
 	/// </summary>

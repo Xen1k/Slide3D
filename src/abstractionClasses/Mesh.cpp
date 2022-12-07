@@ -17,10 +17,13 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, Texture*
 
 void Mesh::RemovePolygon(Polygon* polygon, bool setNewVAO)
 {
+	if (connectedObject->GetPolygonsList().size() == 1)
+		return;
 	for (int i = 0; i < polygon->indicesOfIndexNumbers.size(); i++)
 	{
 		// Indices should be in the right order!
-		indices[polygon->indicesOfIndexNumbers[i]] = indices.back();
+		if(connectedObject->GetPolygonsList()[connectedObject->GetPolygonsList().size() - 1] != polygon)
+			indices[polygon->indicesOfIndexNumbers[i]] = indices.back();
 		indices.pop_back();
 	}
 	multidrawVertsCount[polygon->indexOfMultidrawVertsCount] = multidrawVertsCount.back();
@@ -234,16 +237,21 @@ void Mesh::GenerateMultidrawStartIndices()
 void Mesh::SetVAO()
 {
 	m_VAO.Bind();
-	VBO VBO(vertices);
-	EBO EBO(indices);
-	m_VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
-	m_VAO.LinkAttrib(VBO, 1, 2, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
-	m_VAO.LinkAttrib(VBO, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(5 * sizeof(float)));
+	if (m_VBO)
+	{
+		delete m_VBO;
+		delete m_EBO;
+	}
+	m_VBO = new VBO(vertices);
+	m_EBO = new EBO(indices);
+	m_VAO.LinkAttrib(*m_VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+	m_VAO.LinkAttrib(*m_VBO, 1, 2, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+	m_VAO.LinkAttrib(*m_VBO, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(5 * sizeof(float)));
 
 
 	m_VAO.Unbind();
-	VBO.Unbind();
-	EBO.Unbind();
+	m_VBO->Unbind();
+	m_EBO->Unbind();
 }
 
 void Mesh::Render(Shader& shader, Camera& camera, int drawMode, bool drawMulti)

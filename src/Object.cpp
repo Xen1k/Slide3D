@@ -1,6 +1,9 @@
 #include <iostream>
 #include "Object.h"
 #include "LightSource.h"
+#include "SelectionPolygon.h"
+#include "Selector.h"
+#include "MathUtils.h"
 
 std::vector<Object*> Object::objectsList;
 
@@ -16,6 +19,71 @@ Object::Object(Mesh* mesh, Shader* shader, int drawMode, bool addToObjectsList) 
 	if(addToObjectsList)
 		objectsList.push_back(this);
 }
+
+void Object::RemoveSelectedPolygon()
+{
+	auto selectedPolygon = Selector::lastSelection->selectedPolygon;
+	if (!selectedPolygon)
+		return;
+	Selector::lastSelection->Clear();
+	SelectionPolygon::GetInstance().Clear();
+	mesh->RemovePolygon(selectedPolygon);
+}
+
+void Object::ExtrudeSelection()
+{
+	auto selectedPolygon = Selector::lastSelection->selectedPolygon;
+	if (!selectedPolygon)
+		return;
+
+	SelectionPolygon::GetInstance().Clear();
+	// Remove old polygon
+	mesh->RemovePolygon(selectedPolygon, false);
+
+	vector<unsigned int> newIndices;
+	// Indices
+	for (int i = 0; i < selectedPolygon->verticesIndexNumbers.size(); i++)
+	{
+		mesh->indices.push_back(mesh->vertices.size() + i);
+		newIndices.push_back(mesh->vertices.size() + i);
+	}
+	for (int i = 0; i < selectedPolygon->vertices.size() - 1; i++)
+	{
+		mesh->indices.push_back(selectedPolygon->verticesIndexNumbers[i]);
+		mesh->indices.push_back(selectedPolygon->verticesIndexNumbers[i + 1]);
+		mesh->indices.push_back(newIndices[i + 1]);
+		mesh->indices.push_back(newIndices[i]);
+	}
+
+	mesh->indices.push_back(selectedPolygon->verticesIndexNumbers[selectedPolygon->vertices.size() - 1]);
+	mesh->indices.push_back(selectedPolygon->verticesIndexNumbers[0]);
+	mesh->indices.push_back(newIndices[0]);
+	mesh->indices.push_back(newIndices[selectedPolygon->vertices.size() - 1]);
+
+
+	// Vertices
+	vector<Vertex> newVertices;
+	for (auto vertex : selectedPolygon->vertices)
+	{
+		newVertices.push_back(*vertex);
+		newVertices[newVertices.size() - 1].position += Math::DotV3(selectedPolygon->Forward(), 1.5f);
+	}
+
+
+	mesh->vertices.insert(mesh->vertices.end(), newVertices.begin(), newVertices.end());
+
+	for (int i = 0; i < selectedPolygon->vertices.size() + 1 /* Sides + new front face */; i++)
+		mesh->multidrawVertsCount.push_back(selectedPolygon->verticesIndexNumbers.size());
+
+
+
+	mesh->GenerateMultidrawStartIndices();
+	GeneratePolygonsList();
+	SelectionPolygon::GetInstance().polygon = GetPolygonsList()[GetPolygonsList().size() - 5];
+	Selector::lastSelection->SelectPolygon(SelectionPolygon::GetInstance().polygon, this);
+	mesh->SetVAO();
+}
+
 
 void Object::GeneratePolygonsList()
 {

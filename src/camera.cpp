@@ -54,7 +54,7 @@ void Camera::HandleInputs(GLFWwindow* window, bool stopMouseInput)
 	// Handles mouse inputs
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS)
 	{
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		// Prevents camera from jumping on the first click
 		if (m_firstClick)
 		{

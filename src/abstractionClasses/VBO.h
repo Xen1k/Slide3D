@@ -16,6 +16,7 @@ private:
 	GLuint m_ID;
 public:
 	VBO(std::vector<Vertex>& vertices);
+	~VBO();
 	void Bind();
 	void Unbind();
 	void Delete();

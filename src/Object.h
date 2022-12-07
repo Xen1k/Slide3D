@@ -26,6 +26,9 @@ public:
 
 	void CalculateFlatNormals();
 
+	void ExtrudeSelection();
+	void RemoveSelectedPolygon();
+
 	/// <summary>
 	/// List with all objects
 	/// </summary>

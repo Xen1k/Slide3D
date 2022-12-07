@@ -44,6 +44,13 @@ Polygon* Selector::SelectPolygonWithRay(glm::vec3& rayStart, glm::vec3& rayEnd)
 }
 
 
+void Selection::SelectPolygon(Polygon* polygon, Object* obj)
+{
+	selectedPolygon = polygon;
+	selectedVerticesIndexNumbers = polygon->verticesIndexNumbers;
+	selectedObject = obj;
+}
+
 void Selection::Clear()
 {
 	selectedObject = nullptr;

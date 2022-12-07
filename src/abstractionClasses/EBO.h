@@ -8,6 +8,7 @@ private:
 	GLuint m_ID;
 public:
 	EBO(std::vector<GLuint>& indices);
+	~EBO();
 	void Bind();
 	void Unbind();
 	void Delete();

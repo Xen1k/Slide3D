@@ -27,7 +27,8 @@ public:
 	void Clear();
 	Object* selectedObject;
 	Polygon* selectedPolygon;
-	std::vector<int> selectedVerticesIndexNumbers;
+	std::vector<unsigned int> selectedVerticesIndexNumbers;
+	void SelectPolygon(Polygon* polygon, Object* obj);
 	/// <summary>
 	/// Returns num of selected vertices
 	/// </summary>
