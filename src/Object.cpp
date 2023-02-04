@@ -25,9 +25,10 @@ void Object::RemoveSelectedPolygon()
 	auto selectedPolygon = Selector::lastSelection->selectedPolygon;
 	if (!selectedPolygon)
 		return;
+	
+	mesh->RemovePolygon(selectedPolygon);
 	Selector::lastSelection->Clear();
 	SelectionPolygon::GetInstance().Clear();
-	mesh->RemovePolygon(selectedPolygon);
 }
 
 void Object::ExtrudeSelection()

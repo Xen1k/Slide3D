@@ -88,7 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC; WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\src\vendor\imgui;src\vendor;$(SolutionDir)\Dependencies;$(SolutionDir)\src\utils;$(SolutionDir)\src\;$(SolutionDir)\src\abstractionClasses;$(SolutionDir)\Dependencies\GLFW\include;$(SolutionDir)\Dependencies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\src\gui;$(SolutionDir)\src\vendor\imgui;src\vendor;$(SolutionDir)\Dependencies;$(SolutionDir)\src\utils;$(SolutionDir)\src\;$(SolutionDir)\src\selection;$(SolutionDir)\src\mesh;$(SolutionDir)\src\environment;$(SolutionDir)\src\abstraction-classes;$(SolutionDir)\Dependencies\GLFW\include;$(SolutionDir)\Dependencies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,23 +142,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\SelectionPolygon.cpp" />
-    <ClCompile Include="src\Polygon.cpp" />
+    <ClCompile Include="src\gui\GuiDrawer.cpp" />
+    <ClCompile Include="src\selection\SelectionPolygon.cpp" />
+    <ClCompile Include="src\mesh\Polygon.cpp" />
     <ClCompile Include="src\utils\MathUtils.cpp" />
-    <ClCompile Include="src\Grid.cpp" />
-    <ClCompile Include="src\utils\Primitives.cpp" />
-    <ClCompile Include="src\utils\Selector.cpp" />
+    <ClCompile Include="src\environment\Grid.cpp" />
+    <ClCompile Include="src\mesh\MeshDrag.cpp" />
+    <ClCompile Include="src\mesh\Primitives.cpp" />
+    <ClCompile Include="src\selection\Selector.cpp" />
     <ClCompile Include="src\utils\Physics.cpp" />
-    <ClCompile Include="src\abstractionClasses\Mouse.cpp" />
+    <ClCompile Include="src\abstraction-classes\Mouse.cpp" />
     <ClCompile Include="src\Object.cpp" />
-    <ClCompile Include="src\abstractionClasses\Mesh.cpp" />
-    <ClCompile Include="src\camera.cpp" />
-    <ClCompile Include="src\abstractionClasses\EBO.cpp" />
+    <ClCompile Include="src\abstraction-classes\Mesh.cpp" />
+    <ClCompile Include="src\environment\camera.cpp" />
+    <ClCompile Include="src\abstraction-classes\EBO.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="src\abstractionClasses\shader.cpp" />
-    <ClCompile Include="src\abstractionClasses\VAO.cpp" />
-    <ClCompile Include="src\abstractionClasses\VBO.cpp" />
-    <ClCompile Include="src\LightSource.cpp" />
+    <ClCompile Include="src\abstraction-classes\shader.cpp" />
+    <ClCompile Include="src\abstraction-classes\VAO.cpp" />
+    <ClCompile Include="src\abstraction-classes\VBO.cpp" />
+    <ClCompile Include="src\environment\LightSource.cpp" />
     <ClCompile Include="src\utils\Settings.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui_demo.cpp" />
@@ -168,30 +170,32 @@
     <ClCompile Include="src\vendor\imgui\imgui_tables.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui_widgets.cpp" />
     <ClCompile Include="stb_image.cpp" />
-    <ClCompile Include="src\abstractionClasses\texture.cpp" />
+    <ClCompile Include="src\abstraction-classes\texture.cpp" />
     <ClCompile Include="src\utils\timeManager.cpp" />
-    <ClCompile Include="src\abstractionClasses\Window.cpp" />
+    <ClCompile Include="src\abstraction-classes\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\SelectionPolygon.h" />
-    <ClInclude Include="src\Polygon.h" />
+    <ClInclude Include="src\gui\GuiDrawer.h" />
+    <ClInclude Include="src\selection\SelectionPolygon.h" />
+    <ClInclude Include="src\mesh\Polygon.h" />
     <ClInclude Include="src\utils\Converter.h" />
     <ClInclude Include="src\utils\MathUtils.h" />
-    <ClInclude Include="src\Grid.h" />
-    <ClInclude Include="src\utils\Primitives.h" />
-    <ClInclude Include="src\utils\Selector.h" />
+    <ClInclude Include="src\environment\Grid.h" />
+    <ClInclude Include="src\mesh\MeshDrag.h" />
+    <ClInclude Include="src\mesh\Primitives.h" />
+    <ClInclude Include="src\selection\Selector.h" />
     <ClInclude Include="src\utils\Physics.h" />
-    <ClInclude Include="src\abstractionClasses\Mouse.h" />
+    <ClInclude Include="src\abstraction-classes\Mouse.h" />
     <ClInclude Include="src\Object.h" />
-    <ClInclude Include="src\abstractionClasses\Mesh.h" />
-    <ClInclude Include="src\camera.h" />
+    <ClInclude Include="src\abstraction-classes\Mesh.h" />
+    <ClInclude Include="src\environment\camera.h" />
     <ClInclude Include="Dependencies\stb\stb_image.h" />
-    <ClInclude Include="src\abstractionClasses\EBO.h" />
-    <ClInclude Include="src\abstractionClasses\shader.h" />
-    <ClInclude Include="src\abstractionClasses\VAO.h" />
-    <ClInclude Include="src\abstractionClasses\VBO.h" />
-    <ClInclude Include="src\abstractionClasses\texture.h" />
-    <ClInclude Include="src\LightSource.h" />
+    <ClInclude Include="src\abstraction-classes\EBO.h" />
+    <ClInclude Include="src\abstraction-classes\shader.h" />
+    <ClInclude Include="src\abstraction-classes\VAO.h" />
+    <ClInclude Include="src\abstraction-classes\VBO.h" />
+    <ClInclude Include="src\abstraction-classes\texture.h" />
+    <ClInclude Include="src\environment\LightSource.h" />
     <ClInclude Include="src\utils\Settings.h" />
     <ClInclude Include="src\utils\timeManager.h" />
     <ClInclude Include="src\vendor\imgui\imconfig.h" />
@@ -203,7 +207,7 @@
     <ClInclude Include="src\vendor\imgui\imstb_rectpack.h" />
     <ClInclude Include="src\vendor\imgui\imstb_textedit.h" />
     <ClInclude Include="src\vendor\imgui\imstb_truetype.h" />
-    <ClInclude Include="src\abstractionClasses\Window.h" />
+    <ClInclude Include="src\abstraction-classes\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\grid.shader" />

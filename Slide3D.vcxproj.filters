@@ -18,31 +18,31 @@
     <ClCompile Include="Main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstractionClasses\shader.cpp">
+    <ClCompile Include="src\abstraction-classes\shader.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstractionClasses\VAO.cpp">
+    <ClCompile Include="src\abstraction-classes\VAO.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstractionClasses\VBO.cpp">
+    <ClCompile Include="src\abstraction-classes\VBO.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstractionClasses\EBO.cpp">
+    <ClCompile Include="src\abstraction-classes\EBO.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstractionClasses\texture.cpp">
+    <ClCompile Include="src\abstraction-classes\texture.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="stb_image.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\camera.cpp">
+    <ClCompile Include="src\environment\camera.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\utils\timeManager.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstractionClasses\Mesh.cpp">
+    <ClCompile Include="src\abstraction-classes\Mesh.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui.cpp">
@@ -66,69 +66,75 @@
     <ClCompile Include="src\vendor\imgui\imgui_widgets.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\LightSource.cpp">
+    <ClCompile Include="src\environment\LightSource.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Object.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstractionClasses\Mouse.cpp">
+    <ClCompile Include="src\abstraction-classes\Mouse.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstractionClasses\Window.cpp">
+    <ClCompile Include="src\abstraction-classes\Window.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\utils\Physics.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\utils\Selector.cpp">
+    <ClCompile Include="src\selection\Selector.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Grid.cpp">
+    <ClCompile Include="src\environment\Grid.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\utils\Primitives.cpp">
+    <ClCompile Include="src\mesh\Primitives.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\utils\MathUtils.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Polygon.cpp">
+    <ClCompile Include="src\mesh\Polygon.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\SelectionPolygon.cpp">
+    <ClCompile Include="src\selection\SelectionPolygon.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\utils\Settings.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\mesh\MeshDrag.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\GuiDrawer.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\abstractionClasses\shader.h">
+    <ClInclude Include="src\abstraction-classes\shader.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstractionClasses\VAO.h">
+    <ClInclude Include="src\abstraction-classes\VAO.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstractionClasses\VBO.h">
+    <ClInclude Include="src\abstraction-classes\VBO.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstractionClasses\EBO.h">
+    <ClInclude Include="src\abstraction-classes\EBO.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\stb\stb_image.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstractionClasses\texture.h">
+    <ClInclude Include="src\abstraction-classes\texture.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\camera.h">
+    <ClInclude Include="src\environment\camera.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\timeManager.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstractionClasses\Mesh.h">
+    <ClInclude Include="src\abstraction-classes\Mesh.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imconfig.h">
@@ -158,28 +164,28 @@
     <ClInclude Include="src\vendor\imgui\imstb_truetype.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\LightSource.h">
+    <ClInclude Include="src\environment\LightSource.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Object.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstractionClasses\Mouse.h">
+    <ClInclude Include="src\abstraction-classes\Mouse.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstractionClasses\Window.h">
+    <ClInclude Include="src\abstraction-classes\Window.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\Physics.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\Selector.h">
+    <ClInclude Include="src\selection\Selector.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Grid.h">
+    <ClInclude Include="src\environment\Grid.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\Primitives.h">
+    <ClInclude Include="src\mesh\Primitives.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\MathUtils.h">
@@ -191,10 +197,16 @@
     <ClInclude Include="src\utils\Converter.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Polygon.h">
+    <ClInclude Include="src\mesh\Polygon.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\SelectionPolygon.h">
+    <ClInclude Include="src\selection\SelectionPolygon.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mesh\MeshDrag.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\GuiDrawer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
